@@ -23,11 +23,7 @@ exit(json_encode($res));
 	$type_wj = pathinfo($fname, PATHINFO_EXTENSION); //获取文件类型
 
 	$zip_path = $path.'file/zip/'.date('Y-m-d');
-	if(!is_dir($zip_path) )
-	{
-		mkdir($zip_path, 0777, true); 
-		exec("chmod -R 777 {$zip_path}");
-	}
+	is_dir($zip_path) OR mkdir($zip_path, 0777, true); 
 
 	$pos = strrpos($fname, '.');
 	$zip_file = $zip_path.'/'.$fname;
@@ -38,8 +34,7 @@ exit(json_encode($res));
 		$pos = strrpos($fname, '.');
 		$zip_file = $zip_path.'/'.$fname;
 	}
-	//$zip_file_path = $path.'file/zip_file/'.date('Y-m-d').'/'.substr($fname,0,$pos);
-	$zip_file_path = $path.'file/zip_file/'.date('Y-m-d');
+	$zip_file_path = $path.'file/zip_file/'.date('Y-m-d').'/'.substr($fname,0,$pos);
 	is_dir($zip_file_path) OR mkdir($zip_file_path, 0777, true); 
 		
 	 //判断文件类型
@@ -48,16 +43,9 @@ exit(json_encode($res));
 	if(strtolower($type_wj) == "zip" || strtolower($type_wj) == "rar")
 	{
 		move_uploaded_file($tname,$zip_file); 
-		//中文空格需要加单引号
-		$now_data = date('Y-m-d');
-		$dir_name = substr($fname,0,$pos);
-		//$zip_file_path = "{$path}file/zip_file/{$now_data}/'{$dir_name}'";
-		$zip_file_path = "{$path}file/zip_file/{$now_data}";
-		$zip_file = "{$zip_path}/'{$fname}'";
-
 		if (strtolower($type_wj) == "zip")
 		{
-			/*
+			
 			$zip = new ZipArchive; 
 			$res_status = $zip->open($zip_file); 
 			 if ($res_status === TRUE) { 
@@ -70,12 +58,8 @@ exit(json_encode($res));
 				 $res['code'] = 1;
 				 $res['msg'] = '请稍后再试！';
 			 } 
-			 */
-			 $locale = 'zh_CN.UTF-8';
-			 setlocale(LC_ALL, $locale);
-			 putenv('LC_ALL='.$locale);
 			 
-			 exec("unzip -O GBK -o {$zip_file} -d {$zip_file_path}");
+			 //exec("unzip -O GBK -o {$zip_file} -d {$zip_file_path}");
 		}
 		else
 		{	
@@ -86,12 +70,10 @@ exit(json_encode($res));
 			putenv('LC_ALL='.$locale);
 			exec("rar x {$zip_file} {$zip_file_path}/");
 		}
-		
-		$res['data']['path'] = '/file/zip/'.date('Y-m-d').'/'.$fname;
-		$res['data']['name'] = $fname;
-		
 		exec("chmod -R 777 {$zip_file_path}");
 		exec("chmod -R 777 {$zip_file}");
+		$res['data']['path'] = '/file/zip/'.date('Y-m-d').'/'.$fname;
+		$res['data']['name'] = $fname;
 	 }
 	 else
 	 {

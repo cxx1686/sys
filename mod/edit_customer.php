@@ -2,7 +2,9 @@
 	$customer_info = $index->get_customer($_GET['customer_id']);
 }if($index->check){
 	$index->do_error();
-}else{?>
+}else{
+  $pay_type_list = $index->pay_type_list;
+    ?>
 <form action="?act=edit_customer" method="post">
 	<table class="form">
 		<caption><?=isset($_GET['customer_id']) ? '修改客户资料' : '添加新客户';?></caption>
@@ -16,6 +18,20 @@
 			<th>客户简称</th>
 			<td><input type="text" name="attr_name" class="text" value="<?=isset($customer_info) ? $customer_info['attr_name'] : ''?>" /></td>
 		</tr>
+
+        <tr>
+            <th>收款方式</th>
+            <td>
+            <?if($index->member_info['group_id'] == 9){?>
+              <?foreach($pay_type_list as $v){?>
+                  <input type="checkbox"  name="pay_types[]"<?=isset($customer_info) && (strpos($customer_info['pay_types'],$v) !== false) ? ' checked' : '';?> value="<?=$v?>" />
+                  <label ><?=$v?></label>
+              <?}?>
+            <?}else{?>
+              <?=$customer_info['pay_types']?>
+            <?}?>
+            </td>
+        </tr>
 		<tr>
 			<th>地址</th>
 			<td><input type="text" name="address" class="text" value="<?=isset($customer_info) ? $customer_info['address'] : ''?>" /></td>
