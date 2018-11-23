@@ -1346,5 +1346,25 @@ class index{
 		return $dir_path;
 	}
 
+	// 统计每个客户的待收款
+	function should_gain_total(){
+
+		$where = 'where 1=1 ';
+		if (!empty($_GET['customer_id'])) {
+			$where .= "and customer_id={$_GET['customer_id']}";
+		}
+		$temp_sql = 'select sum(price) as should_gain,customer_id,count(order_id) as num from esys_order ' . $where. ' group by customer_id';
+		$sql = $this->sqllimit($temp_sql);
+		$list = $this->db->get_results($sql);
+		if($list){
+			$num_sql = "SELECT COUNT(*) AS num FROM ($temp_sql) AS temp";
+			$total_num = $this->db->get_results($num_sql);
+			$this->recordcount = $total_num[0]['num'];
+			return $list;
+		}
+		//加一个订单月份和收款金额、收款状态
+		return $list;
+	}
+
 }
 ?>
