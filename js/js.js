@@ -182,6 +182,14 @@ function edit_order_status(step, order_id){
 	ui.box.load('ajax.php?act=edit_order_status&order_id=' + order_id + '&all_pro=' + all_pro+'&part='+part+'&step='+step, step_txt, null);
 	return false;
 }
+function edit_finance(finance_id){
+
+    var step_txt = '修改还款信息';
+    step = 1;
+    no_refresh = true;
+    ui.box.load('ajax.php?act=edit_finance&finance_id=' + finance_id +'&step='+step, step_txt, null);
+    return false;
+}
 
 function start_ajax_edit_order_status(){
 	$('#result_delivery_time').datepicker({dateFormat: "yy-mm-dd"});
@@ -311,6 +319,39 @@ function do_order_status(obj){
 	});
 	return false;
 }
+function do_order_finance_status(obj){
+    var finance_status = $("#finance_status").val();
+    var sy_price = $("#sy_weight").val();
+    if (finance_status==1 && sy_price=='')
+    {
+        alert('请填写剩余金额');
+        return false;
+    }
+    $.ajax({
+        cache: true,
+        type: "POST",
+        dataType: "json",
+        url:'ajax.php?act=do_order_finance_status',
+        data:$(obj).serialize(),
+        async: false,
+        error: function(request) {
+            alert("Connection error");
+        },
+        success: function(e) {
+            debugger;
+            if(e.status == 1){
+                ui.box.close();
+                ui.showMessage(e.msg);
+
+                location.reload();
+
+            }else{
+                ui.error(e.msg);
+            }
+        }
+    });
+    return false;
+}
 
 $('#customer_id').change(function(){
     var is_chang_order = $('#is_chang_order').val();
@@ -351,6 +392,13 @@ function view_kz(v){
 	}
 }
 
+function view_sy_price(v){
+    if(v == 1){
+        $('#sy_price').show();
+    }else{
+        $('#sy_price').hide();
+    }
+}
 //获取客户付款方式
 function get_customer_pay_types(customer_id)
 {

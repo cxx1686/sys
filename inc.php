@@ -925,6 +925,75 @@ class index{
 		// return $str;
 	}
 
+  function do_order_finance_status(){
+    $finance_ids = isset($_GET['finance_id']) ? $_GET['finance_id'] : 0;
+    $ids = explode(',', $finance_ids);
+    foreach($ids as $finance_id){
+      $param_info = explode("_",$finance_id);
+      $customer_id = $param_info['0'];
+      $order_month = $param_info['1'];
+
+      $map['finance_no'] = trim($_GET['finance_no']);
+      $map['finance_status'] = 2;
+
+      $where  = "where customer_id='{$customer_id}' and order_create_month='{$order_month}'";
+
+      //全部还款
+      if( intval($_GET['finance_status'])==2) {
+        $this->db->update('esys_order', $map, $where);
+      }
+      // 部分还款
+      elseif (intval($_GET['finance_status'])==1 && $_GET['sy_price'] >0) {
+        $sql = 'select sum(IF(`sy_price`>0,`sy_price`,price)) as total_sy_price from esys_order '. $where. ' and finance_status!=2 group by customer_id' ;
+        $should_gain =  $this->db->get_row($sql);
+        $total_sy_price = $should_gain['total_sy_price'];
+
+        $sql = 'select price, sy_price, order_id,finance_no,finance_status from esys_order '. $where. 'and finance_status!=2 order by order_id asc';
+        $list  = $this->db->get_results($sql);
+        $gain_price = $total_sy_price-$_GET['sy_price'];
+        $total_price = 0;
+        $order_ids = '';
+        $last_order_id = '';
+        foreach ($list as $v){
+          $price = $v['sy_price'] > 0 ? $v['sy_price'] : $v['price'];
+          $total_price += $price;
+
+          if ($gain_price>=$total_price)
+          {
+            if ($v['finance_status']==1)
+            {
+              $map['finance_no'] = $v['finance_no'].trim($_GET['finance_no']);
+              $this->db->update('esys_order', $map, "order_id ={$v['order_id']}";
+            } else {
+              $order_ids .= "'{$v['order_id']}',";
+            }
+          }
+          else {
+            $last_order_id = $v['order_id'];
+            break;
+          }
+        }
+        
+        if (!empty($order_ids)) {
+          $this->db->update('esys_order', $map, 'order_id in('.rtrim($order_ids, ',').')');
+        }
+
+        if (!empty($last_order_id)) {
+          $last_gain_price = $price - ($total_price - $gain_price) ;
+          if ($last_gain_price > 0 ) {
+            $map['finance_status'] = 1;
+            $map['sy_price'] = $price - $last_gain_price ;
+            $this->db->update('esys_order', $map, "order_id = '{$last_order_id}'");
+          }
+        }
+        $this->ok++;
+        $this->error[] = '收款成功！';
+        $this->header = '?mod=order';
+      }
+    }
+    // return $str;
+  }
+
 	function all_status(){
 		$ids = isset($_POST['ids']) ? implode(',', $_POST['ids']) : '';
 		$purl = isset($_POST['purl']) ? $_POST['purl'] : '';
@@ -1236,6 +1305,26 @@ class index{
 		// exit($str);
 	}
 
+  function edit_finance(){
+    $finance_id = isset($_GET['finance_id']) ? trim($_GET['finance_id']) : 0;
+    $param_info = explode("_",$finance_id);
+    $customer_id = $param_info['0'];
+    $order_month = $param_info['1'];
+    $where  = "where customer_id='{$customer_id}' and order_create_month='{$order_month}'";
+
+    $temp_sql = 'select sum(price) as should_gain,SUM(weight) AS total_weight,
+      customer_id,order_create_month,pay_type,sum(sy_price) as total_sy_price,
+      count(order_id) as num from esys_order ' . $where. ' group by customer_id,order_create_month';
+
+    $should_gain =  $this->db->get_row($temp_sql);
+
+    if(!empty($should_gain)){
+      require_once('mod/ajax_order_finance.php');
+    }else{
+      echo '<p class="box_err">系统繁忙，请稍后重试。</p>';
+    }
+  }
+
 	public function upload_zip($upload_file)
 	{
 		$path = str_replace('\\','/',realpath(dirname(__FILE__).'/'))."/";
@@ -1353,7 +1442,10 @@ class index{
 		if (!empty($_GET['customer_id'])) {
 			$where .= "and customer_id={$_GET['customer_id']}";
 		}
-		$temp_sql = 'select sum(price) as should_gain,customer_id,count(order_id) as num from esys_order ' . $where. ' group by customer_id';
+		$temp_sql = 'select sum(price) as should_gain,SUM(weight) AS total_weight,
+      customer_id,order_create_month,pay_type,sum(sy_price) as total_sy_price,
+      count(order_id) as num from esys_order ' . $where. ' group by customer_id,order_create_month';
+    echo $temp_sql;
 		$sql = $this->sqllimit($temp_sql);
 		$list = $this->db->get_results($sql);
 		if($list){

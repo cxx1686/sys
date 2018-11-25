@@ -45,7 +45,17 @@ if($act){
 			$str['msg'] = implode("/n", $index->error);
 		}
 		exit(json_encode($str));
-	}else{
+	}elseif($act == 'do_order_finance_status'){
+    $index->do_order_finance_status();
+    if($index->ok){
+      $str['status'] = 1;
+      $str['msg'] = implode("/n", $index->error);
+    }elseif($index->check){
+      $str['status'] = 0;
+      $str['msg'] = implode("/n", $index->error);
+    }
+    exit(json_encode($str));
+  }else{
 		if(!$index->check){
 			$str['status'] = 1;
 			$str['con'] = $index->$act();
