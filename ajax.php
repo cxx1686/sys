@@ -55,7 +55,9 @@ if($act){
       $str['msg'] = implode("/n", $index->error);
     }
     exit(json_encode($str));
-  }else{
+  }elseif($act == 'edit_finance'){
+		$index->edit_finance();
+	}else{
 		if(!$index->check){
 			$str['status'] = 1;
 			$str['con'] = $index->$act();

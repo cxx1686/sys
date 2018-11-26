@@ -1434,7 +1434,7 @@ class wpdb {
 			}*/
 			$value = substr($value, 0, -1);
 			$sql = "UPDATE `$table` SET $value $where";
-			
+
 			$this->query($sql);
 			return $id;
 		}else{

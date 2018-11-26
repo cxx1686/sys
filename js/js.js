@@ -185,7 +185,25 @@ function edit_order_status(step, order_id){
 function edit_finance(finance_id){
 
     var step_txt = '修改还款信息';
-    step = 1;
+	fin_ids =[];
+	step = 1;
+	if(finance_id == 'all' || finance_id == 'one'){
+		step = 2;
+		$('.ids:checked').each(function(){
+			fin_ids.push($(this).val());
+		});
+		debugger;
+		if(finance_id == 'one' ) {
+			if (fin_ids.length !=1)
+			{
+				alert('只能选择一个订单！');
+				return false;
+			}
+			step = 3;
+		}
+		finance_id = fin_ids.join();
+	}
+
     no_refresh = true;
     ui.box.load('ajax.php?act=edit_finance&finance_id=' + finance_id +'&step='+step, step_txt, null);
     return false;

@@ -4,13 +4,21 @@
 		<tr>
 			<th>还款状态</th>
 			<td>
-				<select name="finance_status" onchange="view_sy_price(this.value);">
-					<option value="0">待收款</option>
-					<option value="1"<?=$should_gain['total_sy_price'] >0 ? ' selected' : ''?>>部分收款</option>
-					<option value="2">全收款</option>
-				</select>
-				<input style="width:65px;<?if($should_gain['total_sy_price'] == 0){?>display:none;<?}?>" type="text" name="sy_price" class="text" id="sy_price" value="<?=$should_gain['total_sy_weight'] ? $should_gain['total_sy_weight'] : ''?>" placeholder="剩余金额" />
-				
+				<?php if ($_GET['step']==2) {?>
+					<input type="hidden" name="finance_status" value="2" />
+					全部回款
+				<?php }elseif($_GET['step']==3){?>
+					<input type="hidden" name="finance_status" value="1" />
+					<input style="width:65px;" type="text" name="sy_price" class="text" id="sy_price" value="<?=$should_gain['total_sy_price']>0 ? $should_gain['total_sy_price'] : ''?>" placeholder="剩余金额" />
+					部分回款
+				<?php }else{?>
+					<select name="finance_status" onchange="view_sy_price(this.value);">
+						<option value="0">待收款</option>
+						<option value="1"<?=$should_gain['total_sy_price'] >0 ? ' selected' : ''?>>部分收款</option>
+						<option value="2">全收款</option>
+					</select>
+					<input style="width:65px;<?if($should_gain['total_sy_price'] == 0){?>display:none;<?}?>" type="text" name="sy_price" class="text" id="sy_price" value="<?=$should_gain['total_sy_price'] ? $should_gain['total_sy_price'] : ''?>" placeholder="剩余金额" />
+				<?php }?>
 			</td>
 		</tr>
 		<tr>

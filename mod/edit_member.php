@@ -24,6 +24,7 @@
 				<option value="1"<?=isset($member_info) && $member_info['group_id'] == 1 ? ' selected' : ''?>>业务员</option>
 				<option value="2"<?=isset($member_info) && $member_info['group_id'] == 2 ? ' selected' : ''?>>技术员</option>
 				<option value="4"<?=isset($member_info) && $member_info['group_id'] == 4 ? ' selected' : ''?>>跟单员</option>
+				<option value="5"<?=isset($member_info) && $member_info['group_id'] == 5 ? ' selected' : ''?>>财务</option>
 			</select></td>
 		</tr>
 		<tr id="material"<?if(isset($member_info) && in_array($member_info['group_id'], array(2, 4))){}else{echo ' style="display:none;"';}?>>

@@ -28,42 +28,29 @@
 <table class="list" cellpadding="0" cellspacing="0" border="0">
 	<caption>订单列表</caption>
 	<tr>
-		<th>全选<input type="checkbox" id="chkall" onclick="all_select(this,'.ids')" /></th>
-        <th>日期</th>
-        <th>客户</th>
-        <th>总克重</th>
-        <th>应收款</th>
-        <th>付款方式</th>
-        <th>状态</th>
-        <th>回款编号</th>
-		<th>操作</th>
+		<th>日期</th>
+		<th>客户</th>
+		<th>总克重</th>
+		<th>已回款金额</th>
+		<th>付款方式</th>
 	</tr>
-	<?$list = $index->should_gain_total();
+	<?$list = $index->settle_total();
 	if($list){
 		foreach($list as $n=>$v){?>
 	<tr>
-		<td ><input type="checkbox" onclick="checkboxOnclick(this)"  class="ids" name="ids[]" value="<?=$v['customer_id'].'_'.$v['order_create_month']?>" /><?=$v['customer_id'].'_'.$v['order_create_month']?></td>
-        <td><?=$v['order_create_month']?></td>
-        <td><?=$index->get_customer_name($v['customer_id'])?></td>
-        <td><?=$v['total_weight']?></td>
-		<td><?=$v['should_gain']?></td>
-        <td><?=$v['pay_type']?></td>
-        <td><? if($v['total_sy_price']>0){echo '部分回款';}else{ echo '待回款';}?></td>
-        <td></td>
-		<td>
-            <a class="btn" onclick="edit_finance('<?=$v['customer_id'].'_'.$v['order_create_month']?>')">回款</a>
-		</td>
+		 <td><?=$v['order_create_month']?></td>
+     <td><?=$index->get_customer_name($v['customer_id'])?></td>
+		 <td><?=$v['total_weight']?></td>
+     <td><?=$v['total_settle_price']?></td>
+     <td><?=$v['pay_type']?></td>
 	</tr>
+
 	<?}?>
-	<tr>
-		<td colspan="14">
-			<div style="float:left;color:red;line-height:40px;">
-				<input type="button" name="submit" value="部分收款" class="btn3" onclick="edit_finance('one')" />
-				<input type="button" name="submit" class="btn3" value="全部收款" onclick="edit_order_status('all')" />
-			</div>
-			<div style="float:right;line-height:40px;"><? $subPages=new SubPages($index->pagesize,$index->recordcount,10,1);?></div>
-		</td>
-	</tr>
+		<tr>
+			<td colspan="14">
+				<div style="float:right;line-height:40px;"><? $subPages=new SubPages($index->pagesize,$index->recordcount,10,1);?></div>
+			</td>
+		</tr>
 	<?}else{?>
 	<tr><td colspan="14" class="no_info">没有订单！</td></tr>
 	<?}?>
