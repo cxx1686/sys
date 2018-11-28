@@ -1,6 +1,6 @@
 <div class="search_bar">
 	<form action="" method="get" id="order_search">
-		<input type="hidden" name="mod" value="finance_1" />
+		<input type="hidden" name="mod" value="finance_2" />
 		<ul>
 			<li>
 				<select name="customer_id" id="customer_id">
@@ -12,9 +12,9 @@
 				</select><input type="text" class="text" id="search_customer" placeholder="搜索客户" />
 				
 				
-				<input type="text" name="order_start_time" id="datepicker1" value="<?=isset($_GET['order_start_time']) ? $_GET['order_start_time'] : '';?>" readonly="readonly" placeholder="下单开始日期" />
+				<input type="text" name="start_settle_date" id="datepicker1" value="<?=isset($_GET['start_settle_date']) ? $_GET['start_settle_date'] : '';?>" readonly="readonly" placeholder="回款开始日期" />
 				-
-				<input type="text" name="order_end_time" id="datepicker2" value="<?=isset($_GET['order_end_time']) ? $_GET['order_end_time'] : '';?>" readonly="readonly" placeholder="下单截止日期" />
+				<input type="text" name="end_settle_date" id="datepicker2" value="<?=isset($_GET['end_settle_date']) ? $_GET['end_settle_date'] : '';?>" readonly="readonly" placeholder="回款截止日期" />
 				
 				
 			</li>

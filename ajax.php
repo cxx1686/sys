@@ -57,6 +57,16 @@ if($act){
     exit(json_encode($str));
   }elseif($act == 'edit_finance'){
 		$index->edit_finance();
+	}elseif($act == 'reset_finance'){
+		$index->reset_finance();
+		if($index->ok){
+			$str['status'] = 1;
+			$str['msg'] = implode("/n", $index->error);
+		}elseif($index->check){
+			$str['status'] = 0;
+			$str['msg'] = implode("/n", $index->error);
+		}
+		exit(json_encode($str));
 	}else{
 		if(!$index->check){
 			$str['status'] = 1;

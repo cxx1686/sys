@@ -192,7 +192,6 @@ function edit_finance(finance_id){
 		$('.ids:checked').each(function(){
 			fin_ids.push($(this).val());
 		});
-		debugger;
 		if(finance_id == 'one' ) {
 			if (fin_ids.length !=1)
 			{
@@ -211,6 +210,9 @@ function edit_finance(finance_id){
 
 function start_ajax_edit_order_status(){
 	$('#result_delivery_time').datepicker({dateFormat: "yy-mm-dd"});
+}
+function start_ajax_edit_order_finance_status(){
+	$('#settle_time').datepicker({dateFormat: "yy-mm-dd"});
 }
 
 function get_material(){
@@ -323,7 +325,7 @@ function do_order_status(obj){
 			alert("Connection error");
 		},
 		success: function(e) {
-			debugger;
+
 			if(e.status == 1){
 				ui.box.close();
 				ui.showMessage(e.msg);
@@ -340,7 +342,13 @@ function do_order_status(obj){
 function do_order_finance_status(obj){
     var finance_status = $("#finance_status").val();
     var sy_price = $("#sy_weight").val();
-    if (finance_status==1 && sy_price=='')
+	var finance_no = $("#finance_no").val();
+	if(finance_no=='')
+	{
+		alert('请填写回款编号');
+		return false;
+	}
+    else if (finance_status==1 && sy_price=='')
     {
         alert('请填写剩余金额');
         return false;
@@ -356,7 +364,7 @@ function do_order_finance_status(obj){
             alert("Connection error");
         },
         success: function(e) {
-            debugger;
+
             if(e.status == 1){
                 ui.box.close();
                 ui.showMessage(e.msg);
@@ -364,7 +372,7 @@ function do_order_finance_status(obj){
                 location.reload();
 
             }else{
-                ui.error(e.msg);
+				alert(e.msg);
             }
         }
     });
@@ -380,6 +388,34 @@ $('#customer_id').change(function(){
     }
 })
 
+function reset_finance(finance_no)
+{
+	$.ajax({
+		cache: true,
+		type: "POST",
+		dataType: "json",
+		url:'ajax.php?act=reset_finance',
+		data:{finance_no:finance_no},
+		async: false,
+		error: function(request) {
+			alert("Connection error");
+		},
+		success: function(e) {
+
+			if(e.status == 1){
+				ui.box.close();
+				ui.showMessage(e.msg);
+
+				location.reload();
+
+			}else{
+				alert(e.msg);
+			}
+		}
+	});
+	return false;
+	alert(finance_no);
+}
 
 function dc(){
 	$.ajax({

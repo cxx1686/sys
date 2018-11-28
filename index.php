@@ -45,10 +45,15 @@ if($act){
 			<a href="?mod=order_1"<?=in_array($mod, array('order_1', 'edit_order')) ? ' class="cur"': ''?>>下单管理</a>
 			<a href="?mod=order_2"<?=in_array($mod, array('order_2', 'edit_order_status')) ? ' class="cur"': ''?>>发货管理</a>
 			<a href="?mod=order_3"<?=in_array($mod, array('order_3')) ? ' class="cur"': ''?>>订单管理</a>
+			<a href="?mod=finance_1"<?=in_array($mod, array('finance_1')) ? ' class="cur"': ''?>>待回款管理</a>
 			<?}elseif(in_array($index->member_info['group_id'], array(2))){?>
 			<a href="?mod=order_1"<?=in_array($mod, array('order_1', 'edit_order_status')) ? ' class="cur"': ''?>>待生产管理</a>
 			<a href="?mod=order_2"<?=in_array($mod, array('order_2')) ? ' class="cur"': ''?>>已生产管理</a>
 			<a href="?mod=order_3"<?=in_array($mod, array('order_3')) ? ' class="cur"': ''?>>生产管理</a>
+			<?}elseif(in_array($index->member_info['group_id'], array(5))){?>
+				<a href="?mod=finance_1"<?=in_array($mod, array('finance_1')) ? ' class="cur"': ''?>>待回款管理</a>
+				<a href="?mod=finance_2"<?=in_array($mod, array('finance_2')) ? ' class="cur"': ''?>>已回款</a>
+				<a href="?mod=finance_3"<?=in_array($mod, array('finance_3')) ? ' class="cur"': ''?>>回款明细</a>
 			<?}?>
 		</ul>
 		<?if($index->mid){?>
@@ -82,8 +87,8 @@ if($act){
 $baseurl='http://'.$_SERVER['HTTP_HOST'].substr($PHP_SELF,0,strrpos($PHP_SELF,'/'));
 ?>
 <script> var THEME_URL = '<?=$baseurl;?>';</script>
-<script src="js/core.js"></script>
+<script src="js/core.js?11"></script>
 <script type="text/javascript" src="js/jquery.ui.js"></script>
 <script type="text/javascript" src="js/jquery.ui.datepicker-zh-CN.js"></script>
 <script src="js/jquery.fileupload.js"></script>
-<script type="text/javascript" src="js/js.js?2177"></script>
+<script type="text/javascript" src="js/js.js?12"></script>

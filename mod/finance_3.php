@@ -1,6 +1,6 @@
 <div class="search_bar">
 	<form action="" method="get" id="order_search">
-		<input type="hidden" name="mod" value="finance_1" />
+		<input type="hidden" name="mod" value="finance_3" />
 		<ul>
 			<li>
 				<select name="customer_id" id="customer_id">
@@ -10,16 +10,18 @@
 					<option value="<?=$v['customer_id']?>"<?=isset($_GET['customer_id']) && intval($_GET['customer_id']) == $v['customer_id'] ? ' selected' : ''?>><?=$v['attr_name']?></option>
 					<?}?>
 				</select><input type="text" class="text" id="search_customer" placeholder="搜索客户" />
-				
-				
-				<input type="text" name="order_start_time" id="datepicker1" value="<?=isset($_GET['order_start_time']) ? $_GET['order_start_time'] : '';?>" readonly="readonly" placeholder="下单开始日期" />
+				<input type="text" class="text" name='finance_no'id="finance_no" value="<?=empty($_GET['finance_no'])?'':$_GET['finance_no']?>"placeholder="回款编号" />
+
+				<input type="text" name="start_settle_date" id="datepicker1" value="<?=isset($_GET['start_settle_date']) ? $_GET['start_settle_date'] : '';?>" readonly="readonly" placeholder="回款开始日期" />
 				-
-				<input type="text" name="order_end_time" id="datepicker2" value="<?=isset($_GET['order_end_time']) ? $_GET['order_end_time'] : '';?>" readonly="readonly" placeholder="下单截止日期" />
-				
-				
+				<input type="text" name="end_settle_date" id="datepicker2" value="<?=isset($_GET['end_settle_date']) ? $_GET['end_settle_date'] : '';?>" readonly="readonly" placeholder="回款截止日期" />
+
 			</li>
 		</ul>
 		<input type="submit" value="查询" />
+		<? if(!empty($_GET['finance_no'])){?>
+			<input type="button" name="submit" class="btn3" value="撤回该笔回款" onclick="reset_finance('<?=$_GET['finance_no']?>')" />
+		<?}?>
 	</form>
     <ul class="clear"></ul>
 </div>
