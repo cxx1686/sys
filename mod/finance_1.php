@@ -43,7 +43,7 @@
 	if($list){
 		foreach($list as $n=>$v){?>
 	<tr>
-		<td ><input type="checkbox" onclick="checkboxOnclick(this)"  class="ids" name="ids[]" value="<?=$v['customer_id'].'_'.$v['order_create_month']?>" /><?=$v['customer_id'].'_'.$v['order_create_month']?></td>
+		<td ><input type="checkbox" onclick="checkboxOnclick(this)"  class="ids" name="ids[]" value="<?=$v['customer_id'].'_'.$v['order_create_month']?>" /></td>
         <td><?=$v['order_create_month']?></td>
         <td><?=$index->get_customer_name($v['customer_id'])?></td>
         <td><?=$v['total_weight']?></td>

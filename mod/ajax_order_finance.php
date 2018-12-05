@@ -1,6 +1,7 @@
 <form class="box_form" id="ajax_order_finance_status">
 	<table class="form">
 		<input type="hidden" name="finance_id" value="<?=isset($_GET['finance_id']) ? $_GET['finance_id'] : 0?>" />
+		<input type="hidden" name="order_id" value="<?=isset($_GET['order_id']) ? $_GET['order_id'] : 0?>" />
 		<tr>
 			<th>还款状态</th>
 			<td>

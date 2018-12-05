@@ -208,6 +208,21 @@ function edit_finance(finance_id){
     return false;
 }
 
+function edit_finance_by_order(order_id){
+
+	var step_txt = '修改还款信息';
+	step = 1;
+	if (order_id==''){
+		alert('请选择订单');
+		return false;
+	}
+
+
+	no_refresh = true;
+	ui.box.load('ajax.php?act=edit_finance&order_id=' + order_id +'&step='+step, step_txt, null);
+	return false;
+}
+
 function start_ajax_edit_order_status(){
 	$('#result_delivery_time').datepicker({dateFormat: "yy-mm-dd"});
 }
@@ -390,33 +405,61 @@ $('#customer_id').change(function(){
 
 function reset_finance(finance_no)
 {
-	$.ajax({
-		cache: true,
-		type: "POST",
-		dataType: "json",
-		url:'ajax.php?act=reset_finance',
-		data:{finance_no:finance_no},
-		async: false,
-		error: function(request) {
-			alert("Connection error");
-		},
-		success: function(e) {
+	if(confirm("确定要撤回该笔回款吗？")) {
+		$.ajax({
+			cache: true,
+			type: "POST",
+			dataType: "json",
+			url: 'ajax.php?act=reset_finance',
+			data: {finance_no: finance_no},
+			async: false,
+			error: function (request) {
+				alert("Connection error");
+			},
+			success: function (e) {
 
-			if(e.status == 1){
-				ui.box.close();
-				ui.showMessage(e.msg);
+				if (e.status == 1) {
+					ui.box.close();
+					ui.showMessage(e.msg);
 
-				location.reload();
+					location.reload();
 
-			}else{
-				alert(e.msg);
+				} else {
+					alert(e.msg);
+				}
 			}
-		}
-	});
-	return false;
-	alert(finance_no);
+		});
+	}
 }
 
+function reset_finance_by_order_id(order_id)
+{
+	if(confirm("确定要撤回该笔回款吗？")) {
+		$.ajax({
+			cache: true,
+			type: "POST",
+			dataType: "json",
+			url:'ajax.php?act=reset_finance_by_order_id',
+			data:{order_id:order_id},
+			async: false,
+			error: function(request) {
+				alert("Connection error");
+			},
+			success: function(e) {
+
+				if(e.status == 1){
+					ui.box.close();
+					ui.showMessage(e.msg);
+
+					location.reload();
+
+				}else{
+					alert(e.msg);
+				}
+			}
+		});
+	}
+}
 function dc(){
 	$.ajax({
 		cache: true,

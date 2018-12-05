@@ -28,21 +28,25 @@
 <table class="list" cellpadding="0" cellspacing="0" border="0">
 	<caption>订单列表</caption>
 	<tr>
-		<th>日期</th>
+
 		<th>客户</th>
-		<th>总克重</th>
-		<th>已回款金额</th>
-		<th>付款方式</th>
+		<th>回款金额</th>
+		<th>回款编号</th>
+		<th>回款操作财务</th>
+		<th>回款日期</th>
+		<th>创建时间</th>
 	</tr>
 	<?$list = $index->settle_total();
 	if($list){
 		foreach($list as $n=>$v){?>
 	<tr>
-		 <td><?=$v['order_create_month']?></td>
+
      <td><?=$index->get_customer_name($v['customer_id'])?></td>
-		 <td><?=$v['total_weight']?></td>
-     <td><?=$v['total_settle_price']?></td>
-     <td><?=$v['pay_type']?></td>
+     <td><?=$v['price']?></td>
+		 <td><?=$v['finance_no']?></td>
+		 <td><?=$index->get_member_name($v['member_id'])?></td>
+		 <td><?= date('Y-m-d',$v['settle_time'])?></td>
+		 <td><?= date('Y-m-d H:i:s',$v['add_time'])?></td>
 	</tr>
 
 	<?}?>

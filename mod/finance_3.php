@@ -15,6 +15,18 @@
 				<input type="text" name="start_settle_date" id="datepicker1" value="<?=isset($_GET['start_settle_date']) ? $_GET['start_settle_date'] : '';?>" readonly="readonly" placeholder="回款开始日期" />
 				-
 				<input type="text" name="end_settle_date" id="datepicker2" value="<?=isset($_GET['end_settle_date']) ? $_GET['end_settle_date'] : '';?>" readonly="readonly" placeholder="回款截止日期" />
+				<select name="production_status">
+					<option value="">生产状态</option>
+					<option value="0"<?=isset($_GET['production_status']) && is_numeric($_GET['production_status']) && $_GET['production_status']==0 ? ' selected' : '';?>>待上机</option>
+					<option value="1"<?=isset($_GET['production_status']) && is_numeric($_GET['production_status']) && $_GET['production_status']==1 ? ' selected' : '';?>>部分上机</option>
+					<option value="2"<?=isset($_GET['production_status']) && is_numeric($_GET['production_status']) && $_GET['production_status']==2 ? ' selected' : '';?>>已上机</option>
+				</select>
+				<select name="finance_status">
+					<option value="">回款状态</option>
+					<option value="0"<?=isset($_GET['finance_status']) && is_numeric($_GET['finance_status']) && $_GET['finance_status']==0 ? ' selected' : '';?>>未回款</option>
+					<option value="1"<?=isset($_GET['finance_status']) && is_numeric($_GET['finance_status']) && $_GET['finance_status']==1 ? ' selected' : '';?>>部分回款</option>
+					<option value="2"<?=isset($_GET['finance_status']) && is_numeric($_GET['finance_status']) && $_GET['finance_status']==2 ? ' selected' : '';?>>已回款</option>
+				</select>
 
 			</li>
 		</ul>
@@ -39,8 +51,12 @@
 		<th>材料</th>
 		<th>发货时间</th>
 		<th>下单时间</th>
+		<th>生产状态<div class="ordertype"><a href="<?=$index->get_ordertype('production_status', 'asc')?>" class="asc<?=isset($_GET['order']) && $_GET['order']=='production_status' && isset($_GET['type']) && $_GET['type']=='asc' ? ' cur' : ''?>"></a><a href="<?=$index->get_ordertype('production_status', 'desc')?>" class="desc<?=isset($_GET['order']) && $_GET['order']=='production_status' && isset($_GET['type']) && $_GET['type']=='desc' ? ' cur' : ''?>"></a></div></th>
+		<th>发货状态</th>
+		<th>回款状态</th>
 		<th>回款编号</th>
 		<th>回款时间</th>
+		<th>操作</th>
 	</tr>
 	<?$list = $index->order_list(3);
 	if($list){
@@ -55,8 +71,18 @@
 		<td><?=$index->get_material_name($v['material_id'])?></td>
 		<td><font<?=$v['result_delivery_time'] > time() ? (date('Y-m-d', $v['result_delivery_time'])==date('Y-m-d') ? ' color=blue' : (date('H', $v['result_delivery_time']) < 18 ? ' color=orange' : '')) : ' color=red';?>><?=date('Y-m-d', $v['result_delivery_time']) . ' ' . (date('H', $v['result_delivery_time']) >= 18 ? '晚' : '早')?></font></td>
 		<td><?=date('Y-m-d H:i:s', $v['order_time'])?></td>
+		<td><?=$v['machine_id']==0 ? '待上机' : $index->get_machine_name($v['machine_id'])?></td>
+		<td><?=$v['production_status']==1 ? '部分上机' : ($v['production_status']==2 ? '全部上机' : '待上机')?></td>
+		<td><?=$index->get_finance_status_cn($v['finance_status'])?></td>
 		<td><?=$v['finance_no']?></td>
-		<td><?=date('Y-m-d H:i:s', $v['settle_time'])?></td>
+		<td><?= $v['settle_time']==0?'':date('Y-m-d H:i:s', $v['settle_time'])?></td>
+		<td>
+			<? if ($v['finance_status']!=2){?><a class="btn" onclick="edit_finance_by_order('<?=$v['order_id']?>')">回款</a>
+			<?}else{?>
+			<a class="btn" onclick="reset_finance_by_order_id('<?=$v['order_id']?>')">撤回</a>
+			<?}?>
+		</td>
+
 	</tr>
 
 	<?}?>

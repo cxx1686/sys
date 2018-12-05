@@ -53,7 +53,7 @@ if($act){
 			<?}elseif(in_array($index->member_info['group_id'], array(5))){?>
 				<a href="?mod=finance_1"<?=in_array($mod, array('finance_1')) ? ' class="cur"': ''?>>待回款管理</a>
 				<a href="?mod=finance_2"<?=in_array($mod, array('finance_2')) ? ' class="cur"': ''?>>已回款</a>
-				<a href="?mod=finance_3"<?=in_array($mod, array('finance_3')) ? ' class="cur"': ''?>>回款明细</a>
+				<a href="?mod=finance_3"<?=in_array($mod, array('finance_3')) ? ' class="cur"': ''?>>订单明细</a>
 			<?}?>
 		</ul>
 		<?if($index->mid){?>
@@ -91,4 +91,4 @@ $baseurl='http://'.$_SERVER['HTTP_HOST'].substr($PHP_SELF,0,strrpos($PHP_SELF,'/
 <script type="text/javascript" src="js/jquery.ui.js"></script>
 <script type="text/javascript" src="js/jquery.ui.datepicker-zh-CN.js"></script>
 <script src="js/jquery.fileupload.js"></script>
-<script type="text/javascript" src="js/js.js?12"></script>
+<script type="text/javascript" src="js/js.js?15"></script>

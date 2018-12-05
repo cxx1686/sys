@@ -234,10 +234,16 @@ class index{
 	}
 	
 	function get_customer_name($customer_id){
+		$attr_name = '';
 		if($customer_id){
-			$v = $this->get_customer($customer_id);
-			if($v){
-				return $v['attr_name'];
+			$customer_arr = explode(',',$customer_id);
+
+			foreach ($customer_arr as $i){
+				$v = $this->get_customer($i);
+				$attr_name .= $v['attr_name'].',';
+			}
+			if($attr_name){
+				return rtrim($attr_name,',');
 			}else{
 				return '未找到';
 			}
@@ -928,7 +934,12 @@ class index{
 
   function do_order_finance_status(){
     $finance_ids = isset($_POST['finance_id']) ? $_POST['finance_id'] : 0;
-    $ids = explode(',', $finance_ids);
+		$order_id = isset($_POST['order_id']) ? $_POST['order_id'] : 0;
+		if($order_id==0) {
+     $ids = explode(',', $finance_ids);
+		} else {
+			$ids = explode(',', $order_id);
+		}
 		$finance_no = trim($_POST['finance_no']);
 		$finance_no_info = $this->get_finance($finance_no);
 		if(!empty($finance_no_info)){
@@ -937,28 +948,30 @@ class index{
 			return false;
 		}
 		$total_finance_price=0;
-		$finance_orders = array();
-    foreach($ids as $finance_id){
-      $param_info = explode("_",$finance_id);
-      $customer_id = $param_info['0'];
-      $order_month = $param_info['1'];
+		$finance_orders = $customer_id_arr = array();
 
+    foreach($ids as $finance_id) {
       $map['finance_no'] = $finance_no;
       $map['finance_status'] = 2;
 			$map['sy_price'] = 0;
 			$map['settle_time'] = empty($_POST['settle_time']) ? time() : strtotime($_POST['settle_time']);
 
+			if($order_id==0) {
+				$param_info = explode("_",$finance_id);
+				$customer_id = $param_info['0'];
+				$order_month = $param_info['1'];
 
-      $where  = "where customer_id='{$customer_id}' and order_create_month='{$order_month}' AND is_del = 0 ";
+				$where  = "where customer_id='{$customer_id}' and order_create_month='{$order_month}' AND is_del = 0 ";
+			} else {
+				$where  = "where order_id='{$order_id}'";
+			}
 
 			$sql = 'select sum(IF(`sy_price`>0,`sy_price`,price)) as total_sy_price from esys_order '. $where. ' and finance_status!=2 group by customer_id' ;
 			$should_gain =  $this->db->get_row($sql);
 			$total_sy_price = $should_gain['total_sy_price'];
 
-
-			//todo.......
 			//待回款订单
-			$sql = 'select price, sy_price, order_id,finance_no,finance_status from esys_order '. $where. 'and finance_status!=2 order by order_id asc';
+			$sql = 'select price, sy_price, order_id,finance_no,finance_status,customer_id from esys_order '. $where. 'and finance_status!=2 order by order_id asc';
 			$list  = $this->db->get_results($sql);
 
 			$total_price = 0;
@@ -975,6 +988,7 @@ class index{
 			foreach ($list as $v) {
 				$price = $v['sy_price'] > 0 ? $v['sy_price'] : $v['price'];
 				$total_price += $price;
+				$customer_id_arr[$v['customer_id']] = $v['customer_id'];
 				if ($gain_price>=$total_price) {
 					$order_ids .= "'{$v['order_id']}',";
 					$finance_orders[]=array(
@@ -1015,7 +1029,7 @@ class index{
     }
 
 		//记录回款编号和回款金额
-		$this->add_finance($finance_no,$total_finance_price);
+		$this->add_finance(implode(",",$customer_id_arr),$finance_no,$total_finance_price,$map['settle_time']);
 		//记录回款明细
 		$this->add_finance_order($finance_orders);
 		$this->error[] = '收款成功！';
@@ -1095,6 +1109,8 @@ class index{
 		$material_id = isset($_GET['material_id']) ? intval($_GET['material_id']) : '';
 		if($material_id) $where .= ' and material_id = ' . $material_id;
 		if(!empty($_GET['finance_no'])) $where .= " and finance_no = '" . trim($_GET['finance_no'])."'";
+		if(isset($_GET['finance_status'])) $where .= " and finance_status = '" . trim($_GET['finance_status'])."'";
+
 		/*$production_start_time = isset($_GET['production_start_time']) ? strtotime($_GET['production_start_time']) : 0;
 		$production_end_time = isset($_GET['production_end_time']) ? strtotime($_GET['production_end_time']) : 0;
 		$delivery_start_time = isset($_GET['delivery_start_time']) ? strtotime($_GET['delivery_start_time']) : 0;
@@ -1165,9 +1181,6 @@ class index{
 					if(in_array($this->member_info['group_id'], array(1, 4))) $where .= ' and delivery_status = 0 and production_status > 0';
 					elseif(in_array($this->member_info['group_id'], array(2))) $where .= ' and production_status = 2';
 				break;
-				case 3:
-					$where .= ' and finance_status=2';
-					break;
 			}
 		}
 		$sql = 'select sum(weight) as cw, sum(price) as cp from esys_order ' . $where;
@@ -1347,8 +1360,9 @@ class index{
 
   function edit_finance(){
     $finance_id = isset($_GET['finance_id']) ? trim($_GET['finance_id']) : 0;
+		$order_id = isset($_GET['order_id']) ? trim($_GET['order_id']) : 0;
 		$params = explode(",",$finance_id);
-		if (empty($params['1'])) {
+		if (empty($params['1']) && $order_id==0) {
 			$param_info = explode("_",$finance_id);
 			$customer_id = $param_info['0'];
 			$order_month = $param_info['1'];
@@ -1518,7 +1532,7 @@ class index{
 	// 统计每个客户的待收款
 	function settle_total(){
 
-		$where = 'where 1=1 AND finance_status=2 AND is_del = 0  ';
+		$where = 'where 1=1 AND price>0  ';
 		if (!empty($_GET['customer_id'])) {
 			$where .= ' and customer_id in (' . $_GET['customer_id'] . ')';
 		}
@@ -1537,17 +1551,12 @@ class index{
 			$where .= " AND settle_time<{$end_settle_time} ";
 		}
 
-
-		$temp_sql = 'select sum(price)  as total_settle_price,SUM(weight) AS total_weight,
-      customer_id,order_create_month,pay_type,sum(sy_price) as total_sy_price,
-      count(order_id) as num from esys_order ' . $where. ' group by customer_id,order_create_month';
+		$temp_sql = 'select * from esys_finance ' . $where. 'order by id desc';
 
 		$sql = $this->sqllimit($temp_sql);
 		$list = $this->db->get_results($sql);
 		if($list){
-			$num_sql = "SELECT COUNT(*) AS num FROM ($temp_sql) AS temp";
-			$total_num = $this->db->get_results($num_sql);
-			$this->recordcount = $total_num[0]['num'];
+			$this->recordcount = $this->db->get_count($sql);
 			return $list;
 		}
 		//加一个订单月份和收款金额、收款状态
@@ -1567,6 +1576,12 @@ class index{
 		$list = $this->db->get_results($sql);
 		return $list;
 	}
+	function get_finance_orders_by_order_id($order_id) {
+		$sql = "select * from esys_finance_order where order_id='{$order_id}'and is_del=0";
+
+		$list = $this->db->get_results($sql);
+		return $list;
+	}
 
 	function add_finance_order($map){
 		if(is_array($map[0])) {
@@ -1580,18 +1595,19 @@ class index{
 			$this->db->insert('esys_finance_order', $map);
 		}
 	}
-	function add_finance($finance_no,$price){
+	function add_finance($customer_id,$finance_no,$price,$settle_time){
+		$map['customer_id'] = $customer_id;
 		$map['finance_no'] = $finance_no;
 		$map['price'] = $price;
 		$map['member_id'] = $this->mid;
-
+		$map['settle_time'] = $settle_time;
 		$map['add_time'] = time();
 		$this->db->insert('esys_finance', $map);
 	}
 
 	function reset_finance()
 	{
-		$finance_no = trim($_GET['finance_no']);
+		$finance_no = trim($_POST['finance_no']);
 		$list = $this->get_finance_orders($finance_no);
 		foreach($list as $v){
 			$order_id = $v['order_id'];
@@ -1605,9 +1621,50 @@ class index{
 		}
 
 		$this->db->update('esys_finance_order', array('is_del'=>1), "where finance_no='{$finance_no}'",1);
+		$this->db->update('esys_finance', array('price'=>0), "where finance_no='{$finance_no}'",1);
 		$this->ok++;
 		$this->error[] = '撤回成功！';
 
+	}
+
+	function reset_finance_by_order_id()
+	{
+		$order_id = trim($_POST['order_id']);
+		$order_info = $this->get_order($order_id);
+		$update = array(
+			'sy_price' => $order_info['price'],
+			'finance_status' => 1,
+			'finance_no' =>  ''
+		);
+		$this->db->update('esys_order',$update, "where order_id ='{$order_id}'", $order_id);
+
+		$temp_arr = array();
+		$list = $this->get_finance_orders_by_order_id($order_id);
+		foreach($list as $v){
+			$temp_arr[$v['finance_no']] += $v['price'];
+		}
+		$this->db->update('esys_finance_order', array('is_del'=>1), "where order_id='{$order_id}'",1);
+		foreach ($temp_arr as $k=>$v) {
+			$info = $this->get_finance($k);
+			$update = array('price'=> $info['price']-$v);
+			$this->db->update('esys_finance', $update, "where finance_no='{$k}'",1);
+		}
+		$this->ok++;
+		$this->error[] = '撤回成功！';
+
+	}
+
+	function get_finance_status_cn($finance_status){
+		$arr = array(
+			'0' => '未回款',
+			'1' => '部分回款',
+			'2' => '已回款',
+		);
+		if (!empty($arr[$finance_status])) {
+			return $arr[$finance_status];
+		} else {
+			return '';
+		}
 	}
 
 }
