@@ -7,14 +7,19 @@
 					<option value="0">所有客户</option>
 					<?$customer_select = $index->get_customer_select($_GET['member_id']);
 					foreach($customer_select as $v){?>
-					<option value="<?=$v['customer_id']?>"<?=isset($_GET['customer_id']) && intval($_GET['customer_id']) == $v['customer_id'] ? ' selected' : ''?>><?=$v['attr_name']?></option>
+						<option value="<?=$v['customer_id']?>"<?=isset($_GET['customer_id']) && $_GET['customer_id'] == $v['customer_id'] ? ' selected' : ''?>><?=$v['attr_name']?></option>
 					<?}?>
-				</select><input type="text" class="text" id="search_customer" placeholder="搜索客户" />
+				</select><input type="text" name="ck" value="<?=$_GET['ck']?>" class="text" id="search_customer" placeholder="搜索客户" />
+
 				<input type="text" class="text" name='finance_no'id="finance_no" value="<?=empty($_GET['finance_no'])?'':$_GET['finance_no']?>"placeholder="回款编号" />
 
 				<input type="text" name="start_settle_date" id="datepicker1" value="<?=isset($_GET['start_settle_date']) ? $_GET['start_settle_date'] : '';?>" readonly="readonly" placeholder="回款开始日期" />
 				-
 				<input type="text" name="end_settle_date" id="datepicker2" value="<?=isset($_GET['end_settle_date']) ? $_GET['end_settle_date'] : '';?>" readonly="readonly" placeholder="回款截止日期" />
+				<input type="text" name="order_start_time" style="width:80px;" id="order_start_time1" value="<?=isset($_GET['order_start_time']) ? $_GET['order_start_time'] : '';?>" readonly="readonly" placeholder="下单开始日期" />
+				-
+				<input type="text" name="order_end_time" style="width:80px;" id="order_start_time2" value="<?=isset($_GET['order_end_time']) ? $_GET['order_end_time'] : '';?>" readonly="readonly" placeholder="下单截止日期" />
+
 				<select name="production_status">
 					<option value="">生产状态</option>
 					<option value="0"<?=isset($_GET['production_status']) && is_numeric($_GET['production_status']) && $_GET['production_status']==0 ? ' selected' : '';?>>待上机</option>

@@ -7,9 +7,9 @@
 					<option value="0">所有客户</option>
 					<?$customer_select = $index->get_customer_select($_GET['member_id']);
 					foreach($customer_select as $v){?>
-					<option value="<?=$v['customer_id']?>"<?=isset($_GET['customer_id']) && intval($_GET['customer_id']) == $v['customer_id'] ? ' selected' : ''?>><?=$v['attr_name']?></option>
+					<option value="<?=$v['customer_id']?>"<?=isset($_GET['customer_id']) && $_GET['customer_id'] == $v['customer_id'] ? ' selected' : ''?>><?=$v['attr_name']?></option>
 					<?}?>
-				</select><input type="text" class="text" id="search_customer" placeholder="搜索客户" />
+				</select><input type="text" name="ck" value="<?=!empty($_GET['customer_id'])?$_GET['ck']:''?>" class="text" id="search_customer" placeholder="搜索客户" />
 				
 				
 				<input type="text" name="order_start_time" id="datepicker1" value="<?=isset($_GET['order_start_time']) ? $_GET['order_start_time'] : '';?>" readonly="readonly" placeholder="下单开始日期" />
@@ -31,6 +31,7 @@
 		<th>全选<input type="checkbox" id="chkall" onclick="all_select(this,'.ids')" /></th>
 		<th>月份</th>
 		<th>客户</th>
+		<th>业务员</th>
 		<th>总克重</th>
 		<th>应收款</th>
 		<th>付款方式</th>
@@ -46,6 +47,7 @@
 		<td ><input type="checkbox" onclick="checkboxOnclick(this)"  class="ids" name="ids[]" value="<?=$v['customer_id'].'_'.$v['order_create_month']?>" /></td>
         <td><?=$v['order_create_month']?></td>
         <td><?=$index->get_customer_name($v['customer_id'])?></td>
+				<td><?=$index->get_member_name($v['member_id'])?></td>
         <td><?=$v['total_weight']?></td>
 		<td><?=$v['should_gain']?></td>
         <td><?=$v['pay_type']?></td>

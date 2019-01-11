@@ -77,7 +77,7 @@
 		<th>发货状态</th>
 		<th>下单时间<div class="ordertype"><a href="<?=$index->get_ordertype('order_time', 'asc')?>" class="asc<?=isset($_GET['order']) && $_GET['order']=='order_time' && isset($_GET['type']) && $_GET['type']=='asc' ? ' cur' : ''?>"></a><a href="<?=$index->get_ordertype('order_time', 'desc')?>" class="desc<?=isset($_GET['order']) && $_GET['order']=='order_time' && isset($_GET['type']) && $_GET['type']=='desc' ? ' cur' : ''?>"></a></div></th>
         <th>上机时间<div class="ordertype"><a href="<?=$index->get_ordertype('production_time', 'asc')?>" class="asc<?=isset($_GET['order']) && $_GET['order']=='production_time' && isset($_GET['type']) && $_GET['type']=='asc' ? ' cur' : ''?>"></a><a href="<?=$index->get_ordertype('production_time', 'desc')?>" class="desc<?=isset($_GET['order']) && $_GET['order']=='production_time' && isset($_GET['type']) && $_GET['type']=='desc' ? ' cur' : ''?>"></a></div></th>
-		<th>技术员姓名</th>
+		<th>技术员</th>
     <th>图片</th>
 		<th>附件</th>
 		<th>备注</th>

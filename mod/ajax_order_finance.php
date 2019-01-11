@@ -6,18 +6,18 @@
 			<th>还款状态</th>
 			<td>
 				<?php if ($_GET['step']==2) {?>
-					<input type="hidden" name="finance_status" value="2" />
+					<input type="hidden" id="finance_status" name="finance_status" value="2" />
 					全部回款
 				<?php }elseif($_GET['step']==3){?>
-					<input type="hidden" name="finance_status" value="1" />
-					<input style="width:65px;" type="text" name="sy_price" class="text" id="sy_price" value="" placeholder="剩余金额" />
+					<input type="hidden" id="finance_status" name="finance_status" value="1" />
+					<input style="width:65px;" type="text" name="sk_price" class="text" id="sk_price" value="" placeholder="收款金额" />
 					部分回款
 				<?php }else{?>
-					<select name="finance_status" onchange="view_sy_price(this.value);">
+					<select name="finance_status" id="finance_status" onchange="view_sk_price(this.value);">
 						<option value="2">全收款</option>
 						<option value="1"<?=$should_gain['total_sy_price'] >0 ? ' selected' : ''?>>部分收款</option>
 					</select>
-					<input style="width:65px;<?if($should_gain['total_sy_price'] == 0){?>display:none;<?}?>" type="text" name="sy_price" class="text" id="sy_price" value="" placeholder="剩余金额" />
+					<input style="width:65px;<?if($should_gain['total_sy_price'] == 0){?>display:none;<?}?>" type="text" name="sk_price" class="text" id="sk_price" value="" placeholder="收款金额" />
 				<?php }?>
 			</td>
 		</tr>

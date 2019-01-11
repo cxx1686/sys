@@ -5,6 +5,8 @@ $(document).ready(function() {
 	$('#datepicker2').datepicker({dateFormat: "yy-mm-dd"});
 	$('#delivery_time').datepicker({dateFormat: "yy-mm-dd", minDate:0});
 	$('#result_delivery_time').datepicker({dateFormat: "yy-mm-dd"});
+	$('#order_start_time1').datepicker({dateFormat: "yy-mm-dd"});
+	$('#order_start_time2').datepicker({dateFormat: "yy-mm-dd"});
 	$('#search_member_id').change(function(){
 		get_customer();
 	});
@@ -263,7 +265,7 @@ function get_customer(){
 		type: "POST",
 		dataType: "json",
 		url:'ajax.php?act=get_customer_select',
-		data:{ck:$('#search_customer').val(), member_id:member_id},// 你的formid
+		data:{ck:$('#search_customer').val(), member_id:member_id,is_chang_order:is_chang_order},// 你的formid
 		async: false,
 		error: function(request) {
 			alert("Connection error");
@@ -321,6 +323,75 @@ function confirm_production_member(member_id)
     });
     return false;
 }
+
+function confirm_production_member(member_id)
+{
+	order_arr =[];
+	$('.ids:checked').each(function(){
+		order_arr.push($(this).val());
+	});
+	order_ids = order_arr.join();
+
+	if (order_arr.length <1)
+	{
+		alert('请选择订单！');
+		return false;
+	}
+	$.ajax({
+		cache: true,
+		type: "POST",
+		dataType: "json",
+		url:'ajax.php?act=confirm_production_member',
+		data:{order_ids:order_ids, member_id: member_id},
+		async: false,
+		error: function(request) {
+			alert("Connection error");
+		},
+		success: function(e) {
+			if(e.status == 1){
+				location.reload();
+
+			}else{
+				alert(e.msg);
+			}
+		}
+	});
+	return false;
+}
+
+function confirm_budong()
+{
+	order_arr = [];
+	$('.ids:checked').each(function () {
+		order_arr.push($(this).val());
+	});
+	order_ids = order_arr.join();
+
+	if (order_arr.length < 1) {
+		alert('请选择订单！');
+		return false;
+	}
+	$.ajax({
+		cache: true,
+		type: "POST",
+		dataType: "json",
+		url: 'ajax.php?act=confirm_budong',
+		data: {order_ids: order_ids},
+		async: false,
+		error: function (request) {
+			alert("Connection error");
+		},
+		success: function (e) {
+			if (e.status == 1) {
+				location.reload();
+
+			} else {
+				alert(e.msg);
+			}
+		}
+	});
+	return false;
+}
 function do_order_status(obj){
     var production_status = $("#production_status").val();
     var sy_weight = $("#sy_weight").val();
@@ -356,18 +427,19 @@ function do_order_status(obj){
 }
 function do_order_finance_status(obj){
     var finance_status = $("#finance_status").val();
-    var sy_price = $("#sy_weight").val();
+    var sk_price = $("#sk_price").val();
 	var finance_no = $("#finance_no").val();
 	if(finance_no=='')
 	{
 		alert('请填写回款编号');
 		return false;
 	}
-    else if (finance_status==1 && sy_price=='')
+    else if (finance_status==1 && sk_price=='')
     {
-        alert('请填写剩余金额');
+        alert('请填写回款金额');
         return false;
     }
+	debugger;
     $.ajax({
         cache: true,
         type: "POST",
@@ -489,11 +561,11 @@ function view_kz(v){
 	}
 }
 
-function view_sy_price(v){
+function view_sk_price(v){
     if(v == 1){
-        $('#sy_price').show();
+        $('#sk_price').show();
     }else{
-        $('#sy_price').hide();
+        $('#sk_price').hide();
     }
 }
 //获取客户付款方式

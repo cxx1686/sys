@@ -183,16 +183,28 @@ class index{
 	}
 	
 	function get_member_name($mid){
+		$username = '';
 		if($mid){
-			$v = $this->get_member($mid);
-			if($v){
-				return $v['username'];
+			$mid_arr = explode(',',$mid);
+
+			foreach ($mid_arr as $k=>$i){
+				$v = $this->get_member($i);
+				if($k>5) {
+					$username .='...';
+					break;
+				}
+				$username .= $v['username'].',';
+
+			}
+			if($username){
+				return rtrim($username,',');
 			}else{
 				return '未找到';
 			}
 		}else{
 			return '暂无';
 		}
+
 	}
 	
 	function get_machine($machine_id){
@@ -238,8 +250,12 @@ class index{
 		if($customer_id){
 			$customer_arr = explode(',',$customer_id);
 
-			foreach ($customer_arr as $i){
+			foreach ($customer_arr as $k=>$i){
 				$v = $this->get_customer($i);
+				if($k>5) {
+					$attr_name .='...';
+					break;
+				}
 				$attr_name .= $v['attr_name'].',';
 			}
 			if($attr_name){
@@ -573,14 +589,29 @@ class index{
 				$where = ' and member_id = ' . $member_id;
 			}
 		}
-		$ck = isset($_POST['ck']) && $_POST['ck'] ? $this->safe($_POST['ck']) : '';
+
+		$ck = isset($_REQUEST['ck']) && $_REQUEST['ck'] ? $this->safe($_REQUEST['ck']) : '';
+		if(isset($_REQUEST['customer_id']) && $_REQUEST['customer_id']==0){
+			$ck='';
+		}
 		if($ck) $where .= " and attr_name like '%$ck%'";
 		$sql = 'select customer_id, attr_name from esys_customer where is_del=0 ' . $where . ' order by attr_name asc';
 
     $list = $this->db->get_results($sql);
     $res = array();
+		$ck_customer_id = '';
+		$flag = 1;
     foreach($list as $v)
     {
+			if(!empty($ck)&& $_POST['is_chang_order']!=1)
+			{
+				$res[$ck]['attr_name'] = $ck;
+				$ck_customer_id .= $v['customer_id'].',';
+			}
+			if($ck==$v['attr_name']){
+				$flag = 0;
+				unset($res[$ck]);
+			}
       if(empty($res[$v['attr_name']]))
       {
         $res[$v['attr_name']] = $v;
@@ -590,13 +621,17 @@ class index{
         $res[$v['attr_name']]['customer_id'] .= ','.$v['customer_id'];
       }
     }
+		if(!empty($ck_customer_id) && $flag==1)
+		{
+			$res[$ck]['customer_id'] .= trim($ck_customer_id,',');
+		}
     return $res;
 		//return $this->db->get_results($sql);
 	}
 		
 	// 读取员工下拉
 	function get_member_select($group_id = 0){
-		if(in_array($this->member_info['group_id'], array(4, 9))){
+		if(in_array($this->member_info['group_id'], array(4, 9, 5))){
 			$where = '';
 			if($group_id){
 				$where = ' where group_id = 9 or group_id = ' . $group_id;
@@ -860,7 +895,7 @@ class index{
     $order_ids = isset($_POST['order_ids']) ? $_POST['order_ids'] : 0;
     $member_id = isset($_POST['member_id']) ? $_POST['member_id'] : 0;
     if (!empty($order_ids) && !empty($member_id)) {
-      $sql = 'update esys_order set production_member_id = ' . $member_id . ' where order_id in (' . $order_ids . ')';
+      $sql = "update esys_order set production_member_id = IF(production_member_id>1, 0, {$member_id})  where order_id in (" . $order_ids . ')';
       //echo $sql;
       //exit;
       $this->db->query($sql);
@@ -871,8 +906,24 @@ class index{
       $this->error[] = '请选择订单';
     }
     return true;
-
   }
+
+	function confirm_budong(){
+		$order_ids = isset($_POST['order_ids']) ? $_POST['order_ids'] : 0;
+		if (!empty($order_ids) ) {
+			$sql = 'update esys_order set is_bu_dong = IF(is_bu_dong=1, 0, 1) where order_id in (' . $order_ids . ')';
+			//echo $sql;
+			//exit;
+			$this->db->query($sql);
+			$this->ok++;
+			$this->error[] = '操作成功！';
+		} else {
+			$this->check++;
+			$this->error[] = '请选择订单';
+		}
+		return true;
+	}
+
 	function do_order_status(){
 		$order_id = isset($_POST['order_id']) ? $_POST['order_id'] : 0;
 		$ids = explode(',', $order_id);
@@ -948,8 +999,8 @@ class index{
 			return false;
 		}
 		$total_finance_price=0;
-		$finance_orders = $customer_id_arr = array();
-
+		$finance_orders = $customer_id_arr = $sale_member_id_arr = array();
+		$fin_month=0;
     foreach($ids as $finance_id) {
       $map['finance_no'] = $finance_no;
       $map['finance_status'] = 2;
@@ -971,7 +1022,7 @@ class index{
 			$total_sy_price = $should_gain['total_sy_price'];
 
 			//待回款订单
-			$sql = 'select price, sy_price, order_id,finance_no,finance_status,customer_id from esys_order '. $where. 'and finance_status!=2 order by order_id asc';
+			$sql = 'select price, sy_price, order_id,finance_no,finance_status,customer_id,member_id,order_create_month from esys_order '. $where. 'and finance_status!=2 order by order_id asc';
 			$list  = $this->db->get_results($sql);
 
 			$total_price = 0;
@@ -981,14 +1032,16 @@ class index{
 			if( intval($_POST['finance_status'])==2) {
 				$gain_price = $total_sy_price;
 			}//部分回款
-			elseif (intval($_POST['finance_status'])==1 && $_POST['sy_price'] >0) {
-				$gain_price = $total_sy_price-$_POST['sy_price'];
+			elseif (intval($_POST['finance_status'])==1 && $_POST['sk_price'] >0) {
+				$gain_price = $_POST['sk_price'];
 			}
 			$total_finance_price += $gain_price;
 			foreach ($list as $v) {
 				$price = $v['sy_price'] > 0 ? $v['sy_price'] : $v['price'];
 				$total_price += $price;
 				$customer_id_arr[$v['customer_id']] = $v['customer_id'];
+				$sale_member_id_arr[$v['member_id']] = $v['member_id'];
+				$fin_month = $v['order_create_month'];
 				if ($gain_price>=$total_price) {
 					$order_ids .= "'{$v['order_id']}',";
 					$finance_orders[]=array(
@@ -1029,7 +1082,7 @@ class index{
     }
 
 		//记录回款编号和回款金额
-		$this->add_finance(implode(",",$customer_id_arr),$finance_no,$total_finance_price,$map['settle_time']);
+		$this->add_finance(implode(",",$customer_id_arr),$finance_no,$total_finance_price,$map['settle_time'],implode(",",$sale_member_id_arr),$fin_month);
 		//记录回款明细
 		$this->add_finance_order($finance_orders);
 		$this->error[] = '收款成功！';
@@ -1109,7 +1162,7 @@ class index{
 		$material_id = isset($_GET['material_id']) ? intval($_GET['material_id']) : '';
 		if($material_id) $where .= ' and material_id = ' . $material_id;
 		if(!empty($_GET['finance_no'])) $where .= " and finance_no = '" . trim($_GET['finance_no'])."'";
-		if(isset($_GET['finance_status'])) $where .= " and finance_status = '" . trim($_GET['finance_status'])."'";
+		if(is_numeric($_GET['finance_status'])) $where .= " and finance_status = '" . trim($_GET['finance_status'])."'";
 
 		/*$production_start_time = isset($_GET['production_start_time']) ? strtotime($_GET['production_start_time']) : 0;
 		$production_end_time = isset($_GET['production_end_time']) ? strtotime($_GET['production_end_time']) : 0;
@@ -1174,11 +1227,11 @@ class index{
 			switch($step){
 				case 1:
 					// $where .= ' and production_status = 0';
-					if(in_array($this->member_info['group_id'], array(1, 4))) $where .= ' and production_status = 0';
+					if(in_array($this->member_info['group_id'], array(1, 4))) $where .= ' and production_status < 2';
 					elseif(in_array($this->member_info['group_id'], array(2))) $where .= ' and production_status < 2';
 				break;
 				case 2:
-					if(in_array($this->member_info['group_id'], array(1, 4))) $where .= ' and delivery_status = 0 and production_status > 0';
+					if(in_array($this->member_info['group_id'], array(1, 4))) $where .= ' and delivery_status = 0 and production_status > 1';
 					elseif(in_array($this->member_info['group_id'], array(2))) $where .= ' and production_status = 2';
 				break;
 			}
@@ -1513,10 +1566,11 @@ class index{
 		if($order_end_time) $where .= ' and order_time <= ' . $order_end_time;
 
 		$temp_sql = 'select sum(IF(`sy_price`>0,`sy_price`,price))  as should_gain,SUM(weight) AS total_weight,
-      customer_id,order_create_month,pay_type,sum(sy_price) as total_sy_price,
-      count(order_id) as num from esys_order ' . $where. ' group by customer_id,order_create_month';
+      customer_id,member_id,order_create_month,pay_type,sum(sy_price) as total_sy_price,
+      count(order_id) as num from esys_order ' . $where. ' group by customer_id,order_create_month,member_id';
 
 		$sql = $this->sqllimit($temp_sql);
+		//echo $sql;
 		$list = $this->db->get_results($sql);
 		if($list){
 			$num_sql = "SELECT COUNT(*) AS num FROM ($temp_sql) AS temp";
@@ -1539,6 +1593,10 @@ class index{
 
 		if (!empty($_GET['finance_no'])) {
 			$where .= "and finance_no={$_GET['finance_no']}";
+		}
+
+		if (!empty($_GET['member_id'])) {
+			$where .= "and find_in_set({$_GET['member_id']},sale_member_id)";
 		}
 		// 回款时间
 		if (!empty($_GET['start_settle_date']) ) {
@@ -1595,12 +1653,14 @@ class index{
 			$this->db->insert('esys_finance_order', $map);
 		}
 	}
-	function add_finance($customer_id,$finance_no,$price,$settle_time){
+	function add_finance($customer_id,$finance_no,$price,$settle_time,$sale_member_id,$fin_month){
 		$map['customer_id'] = $customer_id;
 		$map['finance_no'] = $finance_no;
 		$map['price'] = $price;
 		$map['member_id'] = $this->mid;
 		$map['settle_time'] = $settle_time;
+		$map['sale_member_id'] = $sale_member_id;
+		$map['fin_month'] = $fin_month;
 		$map['add_time'] = time();
 		$this->db->insert('esys_finance', $map);
 	}

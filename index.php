@@ -91,4 +91,4 @@ $baseurl='http://'.$_SERVER['HTTP_HOST'].substr($PHP_SELF,0,strrpos($PHP_SELF,'/
 <script type="text/javascript" src="js/jquery.ui.js"></script>
 <script type="text/javascript" src="js/jquery.ui.datepicker-zh-CN.js"></script>
 <script src="js/jquery.fileupload.js"></script>
-<script type="text/javascript" src="js/js.js?15"></script>
+<script type="text/javascript" src="js/js.js?201901092"></script>

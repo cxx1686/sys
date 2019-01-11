@@ -58,8 +58,9 @@
 		<th>发货时间<div class="ordertype"><a href="<?=$index->get_ordertype('delivery_time', 'asc')?>" class="asc<?=isset($_GET['order']) && $_GET['order']=='delivery_time' && isset($_GET['type']) && $_GET['type']=='asc' ? ' cur' : ''?>"></a><a href="<?=$index->get_ordertype('delivery_time', 'desc')?>" class="desc<?=isset($_GET['order']) && $_GET['order']=='delivery_time' && isset($_GET['type']) && $_GET['type']=='desc' ? ' cur' : ''?>"></a></div></th>
 		<th>上机状态<div class="ordertype"><a href="<?=$index->get_ordertype('machine_id', 'asc')?>" class="asc<?=isset($_GET['order']) && $_GET['order']=='machine_id' && isset($_GET['type']) && $_GET['type']=='asc' ? ' cur' : ''?>"></a><a href="<?=$index->get_ordertype('machine_id', 'desc')?>" class="desc<?=isset($_GET['order']) && $_GET['order']=='machine_id' && isset($_GET['type']) && $_GET['type']=='desc' ? ' cur' : ''?>"></a></div></th>
 		<th>上机时间<div class="ordertype"><a href="<?=$index->get_ordertype('production_time', 'asc')?>" class="asc<?=isset($_GET['order']) && $_GET['order']=='production_time' && isset($_GET['type']) && $_GET['type']=='asc' ? ' cur' : ''?>"></a><a href="<?=$index->get_ordertype('production_time', 'desc')?>" class="desc<?=isset($_GET['order']) && $_GET['order']=='production_time' && isset($_GET['type']) && $_GET['type']=='desc' ? ' cur' : ''?>"></a></div></th>
-        <th>下单时间<div class="ordertype"><a href="<?=$index->get_ordertype('order_time', 'asc')?>" class="asc<?=isset($_GET['order']) && $_GET['order']=='order_time' && isset($_GET['type']) && $_GET['type']=='asc' ? ' cur' : ''?>"></a><a href="<?=$index->get_ordertype('order_time', 'desc')?>" class="desc<?=isset($_GET['order']) && $_GET['order']=='order_time' && isset($_GET['type']) && $_GET['type']=='desc' ? ' cur' : ''?>"></a></div></th>
-		<th>技术员姓名</th>
+    <th>下单时间<div class="ordertype"><a href="<?=$index->get_ordertype('order_time', 'asc')?>" class="asc<?=isset($_GET['order']) && $_GET['order']=='order_time' && isset($_GET['type']) && $_GET['type']=='asc' ? ' cur' : ''?>"></a><a href="<?=$index->get_ordertype('order_time', 'desc')?>" class="desc<?=isset($_GET['order']) && $_GET['order']=='order_time' && isset($_GET['type']) && $_GET['type']=='desc' ? ' cur' : ''?>"></a></div></th>
+		<th>补洞</th>
+		<th>技术员</th>
 		<th>图片</th>
 		<th>附件</th>
 		<th>备注</th>
@@ -82,6 +83,7 @@
 		<td><?=$v['production_status']==1 ? '部分上机' : $index->get_machine_name($v['machine_id'])?></td>
 		<td><?=$v['production_time'] ? date('Y-m-d H:i', $v['production_time']) : '未上机';?></td>
         <td><?=date('Y-m-d H:i:s', $v['order_time'])?></td>
+		<td><font color="orange"><?if(!empty($v['is_bu_dong'])){?>是<?}?></font></td>
 		<td><font color="blue"><?if(!empty($v['production_member_id'])){?><?=$index->get_member_name($v['production_member_id'])?><?}?></font></td>
         <td><?=$v['img'] ? '<a href="server/php/files/' . $v['img'] . '" target="_blank">查看</a>' : ''?></td>
 		<td><?=$v['zip_path'] ? '<a href="' . $v['zip_path'] . '" target="_blank">下载</a>' : ''?></td>
@@ -102,7 +104,9 @@
 	<? $count_td = in_array($index->member_info['group_id'], array(1, 4))?12:11;
 	if(in_array($index->member_info['group_id'], array(9, 4))){$count_td++;}?>
 		<td colspan="<?=$count_td?>">
-			<div style="float:left;color:red;"><b>总克重：</b><?=$index->count_weight;?><?if($index->member_info['group_id']==1){?>，<b>总金额：</b><? echo $index->count_price;}?></div>
+			<div style="float:left;color:red;line-height:40px;">
+				<b>总克重：</b><?=$index->count_weight;?><?if($index->member_info['group_id']==1){?>，<b>总金额：</b><? echo $index->count_price;}?>
+			</div>
 			<div style="float:right;"><? $subPages=new SubPages($index->pagesize,$index->recordcount,10,1);?></div>
 		</td>
 	</tr>

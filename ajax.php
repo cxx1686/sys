@@ -34,7 +34,17 @@ if($act){
       $str['msg'] = implode("/n", $index->error);
     }
     exit(json_encode($str));
-  }
+  }elseif($act == 'confirm_budong'){
+		$index->confirm_budong();
+		if($index->ok){
+			$str['status'] = 1;
+			$str['msg'] = implode("/n", $index->error);
+		}elseif($index->check){
+			$str['status'] = 0;
+			$str['msg'] = implode("/n", $index->error);
+		}
+		exit(json_encode($str));
+	}
 	elseif($act == 'do_order_status'){
 		$index->do_order_status();
 		if($index->ok){

@@ -74,7 +74,8 @@
 		<th>上机状态<div class="ordertype"><a href="<?=$index->get_ordertype('machine_id', 'asc')?>" class="asc<?=isset($_GET['order']) && $_GET['order']=='machine_id' && isset($_GET['type']) && $_GET['type']=='asc' ? ' cur' : ''?>"></a><a href="<?=$index->get_ordertype('machine_id', 'desc')?>" class="desc<?=isset($_GET['order']) && $_GET['order']=='machine_id' && isset($_GET['type']) && $_GET['type']=='desc' ? ' cur' : ''?>"></a></div></th>
 		<th>生产状态<div class="ordertype"><a href="<?=$index->get_ordertype('production_status', 'asc')?>" class="asc<?=isset($_GET['order']) && $_GET['order']=='production_status' && isset($_GET['type']) && $_GET['type']=='asc' ? ' cur' : ''?>"></a><a href="<?=$index->get_ordertype('production_status', 'desc')?>" class="desc<?=isset($_GET['order']) && $_GET['order']=='production_status' && isset($_GET['type']) && $_GET['type']=='desc' ? ' cur' : ''?>"></a></div></th>
 		<th>下单时间<div class="ordertype"><a href="<?=$index->get_ordertype('order_time', 'asc')?>" class="asc<?=isset($_GET['order']) && $_GET['order']=='order_time' && isset($_GET['type']) && $_GET['type']=='asc' ? ' cur' : ''?>"></a><a href="<?=$index->get_ordertype('order_time', 'desc')?>" class="desc<?=isset($_GET['order']) && $_GET['order']=='order_time' && isset($_GET['type']) && $_GET['type']=='desc' ? ' cur' : ''?>"></a></div></th>
-        <th>技术员姓名</th>
+		<th>补洞</th>
+        <th>技术员</th>
         <th>图片</th>
 		<th>附件</th>
 		<th>备注</th>
@@ -101,6 +102,7 @@
         </td>
 		<td><?=$v['production_status']==1 ? '部分上机' : ($v['production_status']==2 ? '全部上机' : '待上机')?></td>
 		<td><?=date('Y-m-d H:i:s', $v['order_time'])?></td>
+		<td><font color="orange"><?if(!empty($v['is_bu_dong'])){?>是<?}?></font></td>
     <td><font color="blue"><?if(!empty($v['production_member_id'])){?><?=$index->get_member_name($v['production_member_id'])?><?}?></font></td>
 		<td><?=$v['img'] ? '<a href="server/php/files/' . $v['img'] . '" target="_blank">查看</a>' : ''?></td>
 		<td><?=$v['zip_path'] ? '<a href="' . $v['zip_path'] . '" target="_blank">下载</a>' : ''?></td>
@@ -122,6 +124,7 @@
                     <input type="button" name="submit" value="部分上机" class="btn3" onclick="edit_order_status(5, 'all')" />
                     <input type="button" name="submit" class="btn3" value="全部上机" onclick="edit_order_status(1, 'all')" />
                     <input type="button" name="submit" class="btn3" value="选择订单" onclick="confirm_production_member(<?=$index->mid?>)" />
+										<input type="button" name="submit" class="btn3" value="是否补洞" onclick="confirm_budong()" />
               <?}?>
                     <b>总克重：</b><?=$index->count_weight;?><?if($index->member_info['group_id']==1){?>，<b>总金额：</b><? echo $index->count_price;}?>
 			<?if(in_array($index->member_info['group_id'],array(1,2))){?>
