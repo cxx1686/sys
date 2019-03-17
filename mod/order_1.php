@@ -102,7 +102,11 @@
         </td>
 		<td><?=$v['production_status']==1 ? '部分上机' : ($v['production_status']==2 ? '全部上机' : '待上机')?></td>
 		<td><?=date('Y-m-d H:i:s', $v['order_time'])?></td>
-		<td><font color="orange"><?if(!empty($v['is_bu_dong'])){?>是<?}?></font></td>
+		<td>
+            <label for="male" onclick="ajax_budong(<?=$v['order_id']?>)">补洞</label>
+            <font color="orange"><?if(!empty($v['is_bu_dong'])){?>是<?}?></font>
+
+        </td>--!>
     <td><font color="blue"><?if(!empty($v['production_member_id'])){?><?=$index->get_member_name($v['production_member_id'])?><?}?></font></td>
 		<td><?=$v['img'] ? '<a href="server/php/files/' . $v['img'] . '" target="_blank">查看</a>' : ''?></td>
 		<td><?=$v['zip_path'] ? '<a href="' . $v['zip_path'] . '" target="_blank">下载</a>' : ''?></td>

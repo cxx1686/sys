@@ -392,6 +392,42 @@ function confirm_budong()
 	});
 	return false;
 }
+
+function ajax_budong(order_id)
+{
+
+
+    if (order_id=='') {
+        alert('请选择订单！');
+        return false;
+    }
+
+    no_refresh = true;
+    ui.box.load('ajax.php?act=do_budong&order_id=' + order_id);
+    return false;
+    alert(order_id);return false;
+    $.ajax({
+        cache: true,
+        type: "POST",
+        dataType: "json",
+        url: 'ajax.php?act=confirm_budong',
+        data: {order_ids: order_ids},
+        async: false,
+        error: function (request) {
+            alert("Connection error");
+        },
+        success: function (e) {
+            if (e.status == 1) {
+                location.reload();
+
+            } else {
+                alert(e.msg);
+            }
+        }
+    });
+    return false;
+}
+
 function do_order_status(obj){
     var production_status = $("#production_status").val();
     var sy_weight = $("#sy_weight").val();
@@ -439,7 +475,6 @@ function do_order_finance_status(obj){
         alert('请填写回款金额');
         return false;
     }
-	debugger;
     $.ajax({
         cache: true,
         type: "POST",
