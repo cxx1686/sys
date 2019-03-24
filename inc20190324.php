@@ -1418,6 +1418,30 @@ class index{
 		}
 		// exit($str);
 	}
+	function do_budong(){
+		$order_id = isset($_GET['order_id']) ? intval($_GET['order_id']) : 0;
+		$order_info = $this->get_order($order_id);
+		$this->order_status_jurisdiction($order_info);
+		if(!$this->check){
+			require_once('mod/ajax_do_budong.php');
+		}else{
+			echo '<p class="box_err">' . implode('<br />', $this->error);
+			// unset($this->error);
+		}
+		// exit($str);
+	}
+
+	function ajax_budong(){
+		$order_id = isset($_POST['order_id']) ? $_POST['order_id'] : 0;
+		$bu_dong_img = isset($_POST['img']) ? $_POST['img'] : '';
+		$map['bu_dong_img'] = $bu_dong_img;
+		
+		$this->db->update('esys_order', $map, 'where order_id=' . $order_id, $order_id);
+		$this->ok++;
+		$this->error[] = '上传补洞图片成功！';
+					
+		
+	}
 
   function edit_finance(){
     $finance_id = isset($_GET['finance_id']) ? trim($_GET['finance_id']) : 0;
@@ -1742,31 +1766,6 @@ class index{
 		} else {
 			return '';
 		}
-	}
-
-	function do_budong(){
-		$order_id = isset($_GET['order_id']) ? intval($_GET['order_id']) : 0;
-		$order_info = $this->get_order($order_id);
-		$this->order_status_jurisdiction($order_info);
-		if(!$this->check){
-			require_once('mod/ajax_do_budong.php');
-		}else{
-			echo '<p class="box_err">' . implode('<br />', $this->error);
-			// unset($this->error);
-		}
-		// exit($str);
-	}
-
-	function ajax_budong(){
-		$order_id = isset($_POST['order_id']) ? $_POST['order_id'] : 0;
-		$bu_dong_img = isset($_POST['img']) ? $_POST['img'] : '';
-		$map['bu_dong_img'] = $bu_dong_img;
-		
-		$this->db->update('esys_order', $map, 'where order_id=' . $order_id, $order_id);
-		$this->ok++;
-		$this->error[] = '上传补洞图片成功！';
-					
-		
 	}
 
 }

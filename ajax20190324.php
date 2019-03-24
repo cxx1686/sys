@@ -44,7 +44,8 @@ if($act){
 			$str['msg'] = implode("/n", $index->error);
 		}
 		exit(json_encode($str));
-	}elseif($act == 'do_budong'){
+	}
+	elseif($act == 'do_budong'){
 		$index->do_budong();
 	}
 	elseif($act == 'upload_do_budong'){
@@ -57,6 +58,7 @@ if($act){
 			$str['msg'] = implode("/n", $index->error);
 		}
 		exit(json_encode($str));
+		print_r($_POST);die;
 	}
 	elseif($act == 'do_order_status'){
 		$index->do_order_status();

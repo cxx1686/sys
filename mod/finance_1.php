@@ -15,8 +15,15 @@
 				<input type="text" name="order_start_time" id="datepicker1" value="<?=isset($_GET['order_start_time']) ? $_GET['order_start_time'] : '';?>" readonly="readonly" placeholder="下单开始日期" />
 				-
 				<input type="text" name="order_end_time" id="datepicker2" value="<?=isset($_GET['order_end_time']) ? $_GET['order_end_time'] : '';?>" readonly="readonly" placeholder="下单截止日期" />
-				
-				
+
+                <select name="pay_type">
+                    <option value="0">付款方式</option>
+                  <?$pay_type_list = $index->pay_type_list;
+                    foreach($pay_type_list as $v){?>
+                        <option value="<?=$v?>"<?=isset($_GET['pay_type']) && $_GET['pay_type'] == $v ? ' selected' : ''?>><?=$v?></option>
+                    <?}
+                  ?>
+                </select>
 			</li>
 		</ul>
 		<input type="submit" value="查询" />
@@ -31,9 +38,12 @@
 		<th>全选<input type="checkbox" id="chkall" onclick="all_select(this,'.ids')" /></th>
 		<th>月份</th>
 		<th>客户</th>
+        <?if(in_array($index->member_info['group_id'], array(5))){?>
 		<th>业务员</th>
+        <?}?>
 		<th>总克重</th>
 		<th>应收款</th>
+        <th>总金额</th>
 		<th>付款方式</th>
 		<th>状态</th>
 		<?if(in_array($index->member_info['group_id'], array(5))){?>
@@ -47,9 +57,12 @@
 		<td ><input type="checkbox" onclick="checkboxOnclick(this)"  class="ids" name="ids[]" value="<?=$v['customer_id'].'_'.$v['order_create_month']?>" /></td>
         <td><?=$v['order_create_month']?></td>
         <td><?=$index->get_customer_name($v['customer_id'])?></td>
-				<td><?=$index->get_member_name($v['member_id'])?></td>
+        <?if(in_array($index->member_info['group_id'], array(5))){?>
+		<td><?=$index->get_member_name($v['member_id'])?></td>
+        <?}?>
         <td><?=$v['total_weight']?></td>
 		<td><?=$v['should_gain']?></td>
+        <td><?=$v['total_price']?></td>
         <td><?=$v['pay_type']?></td>
         <td><? if($v['total_sy_price']>0){echo '部分回款';}else{ echo '待回款';}?></td>
 		<?if(in_array($index->member_info['group_id'], array(5))){?>

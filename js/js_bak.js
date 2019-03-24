@@ -16,10 +16,9 @@ $(document).ready(function() {
 	$('#search_material').keyup(function(){
 		get_material();
 	});
-	if($('#fileupload')[0]){
+	if($('#fileupload')[0] ){
 		var url = window.location.hostname === 'blueimp.github.io' ?
 					'//jquery-file-upload.appspot.com/' : 'server/php/';
-
 		$('#fileupload').fileupload({
 			url: url,
 			dataType: 'json',
@@ -90,9 +89,6 @@ $(document).ready(function() {
 			con_refresh();
 		});
 	}
-
-
-
 });
 function member_ch_mater(){
 	var g_id = $('#group_id').val();
@@ -392,6 +388,46 @@ function confirm_budong()
 	});
 	return false;
 }
+
+function ajax_budong(order_id)
+{
+    if (order_id=='') {
+        alert('请选择订单！');
+        return false;
+    }
+	no_refresh = true;
+    ui.box.load('ajax.php?act=do_budong&order_id=' + order_id);
+    return false;
+}
+
+function ajax_do_budong(obj){
+	
+	$.ajax({
+		cache: true,
+		type: "POST",
+		dataType: "json",
+		url:'ajax.php?act=upload_do_budong',
+		data:$(obj).serialize(),
+		async: false,
+		error: function(request) {
+			alert("Connection error");
+		},
+		success: function(e) {
+
+			if(e.status == 1){
+				ui.box.close();
+				ui.showMessage(e.msg);
+
+				location.reload();
+
+			}else{
+				ui.error(e.msg);
+			}
+		}
+	});
+	return false;
+} 
+
 function do_order_status(obj){
     var production_status = $("#production_status").val();
     var sy_weight = $("#sy_weight").val();
@@ -411,11 +447,9 @@ function do_order_status(obj){
 			alert("Connection error");
 		},
 		success: function(e) {
-
 			if(e.status == 1){
 				ui.box.close();
 				ui.showMessage(e.msg);
-
 				location.reload();
 
 			}else{
@@ -439,7 +473,6 @@ function do_order_finance_status(obj){
         alert('请填写回款金额');
         return false;
     }
-	debugger;
     $.ajax({
         cache: true,
         type: "POST",
@@ -603,45 +636,6 @@ function checkboxOnclick(checkbox){
     parent_tr.style.backgroundColor=parent_tr_color;
 
 }
-function ajax_budong(order_id)
-{
-    if (order_id=='') {
-        alert('请选择订单！');
-        return false;
-    }
-	no_refresh = true;
-    ui.box.load('ajax.php?act=do_budong&order_id=' + order_id);
-    return false;
-}
-
-function ajax_do_budong(obj){
-	
-	$.ajax({
-		cache: true,
-		type: "POST",
-		dataType: "json",
-		url:'ajax.php?act=upload_do_budong',
-		data:$(obj).serialize(),
-		async: false,
-		error: function(request) {
-			alert("Connection error");
-		},
-		success: function(e) {
-
-			if(e.status == 1){
-				ui.box.close();
-				ui.showMessage(e.msg);
-
-				location.reload();
-
-			}else{
-				ui.error(e.msg);
-			}
-		}
-	});
-	return false;
-} 
-
 window.onload=function (){
     var customer_id = $("#customer_id").val();
     var order_id = $("#order_id").val();

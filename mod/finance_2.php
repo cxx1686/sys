@@ -22,7 +22,14 @@
 				<input type="text" name="start_settle_date" id="datepicker1" value="<?=isset($_GET['start_settle_date']) ? $_GET['start_settle_date'] : '';?>" readonly="readonly" placeholder="回款开始日期" />
 				-
 				<input type="text" name="end_settle_date" id="datepicker2" value="<?=isset($_GET['end_settle_date']) ? $_GET['end_settle_date'] : '';?>" readonly="readonly" placeholder="回款截止日期" />
-				
+                <select name="pay_type">
+                    <option value="0">付款方式</option>
+                  <?$pay_type_list = $index->pay_type_list;
+                  foreach($pay_type_list as $v){?>
+                      <option value="<?=$v?>"<?=isset($_GET['pay_type']) && $_GET['pay_type'] == $v ? ' selected' : ''?>><?=$v?></option>
+                  <?}
+                  ?>
+                </select>
 				
 			</li>
 		</ul>
