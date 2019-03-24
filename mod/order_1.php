@@ -105,7 +105,7 @@
 		<td>
 			<?=$v['bu_dong_img'] ? '<a href="server/php/files/' . $v['bu_dong_img'] . '" target="_blank" style="color:orange" >是</a>' : '<label for="male" onclick="ajax_budong('.$v['order_id'].')" style="color:#fff"  >否</label>'?>
 
-        </td>--!>
+        </td>
     <td><font color="blue"><?if(!empty($v['production_member_id'])){?><?=$index->get_member_name($v['production_member_id'])?><?}?></font></td>
 		<td><?=$v['img'] ? '<a href="server/php/files/' . $v['img'] . '" target="_blank">查看</a>' : ''?></td>
 		<td><?=$v['zip_path'] ? '<a href="' . $v['zip_path'] . '" target="_blank">下载</a>' : ''?></td>
