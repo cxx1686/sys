@@ -83,7 +83,7 @@
 		<td><?=$v['production_status']==1 ? '部分上机' : $index->get_machine_name($v['machine_id'])?></td>
 		<td><?=$v['production_time'] ? date('Y-m-d H:i', $v['production_time']) : '未上机';?></td>
         <td><?=date('Y-m-d H:i:s', $v['order_time'])?></td>
-		<td><font color="orange"><?if(!empty($v['is_bu_dong'])){?>是<?}?></font></td>
+		<td><?=$v['bu_dong_img'] ? '<a href="server/php/files/' . $v['bu_dong_img'] . '" target="_blank" style="color:orange" >是</a>' : ''?></td>
 		<td><font color="blue"><?if(!empty($v['production_member_id'])){?><?=$index->get_member_name($v['production_member_id'])?><?}?></font></td>
         <td><?=$v['img'] ? '<a href="server/php/files/' . $v['img'] . '" target="_blank">查看</a>' : ''?></td>
 		<td><?=$v['zip_path'] ? '<a href="' . $v['zip_path'] . '" target="_blank">下载</a>' : ''?></td>
