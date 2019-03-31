@@ -103,7 +103,14 @@
 		<td><?=$v['production_status']==1 ? '部分上机' : ($v['production_status']==2 ? '全部上机' : '待上机')?></td>
 		<td><?=date('Y-m-d H:i:s', $v['order_time'])?></td>
 		<td>
-			<?=$v['bu_dong_img'] ? '<a href="server/php/files/' . $v['bu_dong_img'] . '" target="_blank" style="color:orange" >是</a>' : '<label for="male" onclick="ajax_budong('.$v['order_id'].')" style="color:#fff"  >否</label>'?>
+		<? if(empty($v['bu_dong_img'])) {  ?>
+			<label for="male" onclick="ajax_budong('<?=$v['order_id']?>')" style="color:#fff"  >否</label>
+		<?}else{ $bu_dong_img_arr = explode(',',$v['bu_dong_img']);  if(count($bu_dong_img_arr)==1) {?>
+			
+			<a href="server/php/files/<?=$v['bu_dong_img']?>" target="_blank" style="color:orange" >是</a>
+		<?}}?>	
+
+			
 
         </td>
     <td><font color="blue"><?if(!empty($v['production_member_id'])){?><?=$index->get_member_name($v['production_member_id'])?><?}?></font></td>

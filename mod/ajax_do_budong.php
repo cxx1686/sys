@@ -12,7 +12,8 @@
 					<input id="fileupload" type="file" name="files[]" multiple>
 				</span>
 				<div id="budong_imgs">
-				<input type="hidden" id="img" name="img[]" value="<?=isset($order_info) ? $order_info['bu_dong_img'] : ''?>" />
+					<!-- <input type="hidden" id="img" name="img[]" value="<?=isset($order_info) ? $order_info['bu_dong_img'] : ''?>" />
+					 -->
 				</div>
 				<br />
 				<br />
@@ -27,7 +28,7 @@
 		<tr>
 			<th></th>
 			<td>
-				<input type="button" onclick="ajax_do_budong('#ajax_do_budong');" value="上传" class="btn" /><a>xxx</a>
+				<input type="button" onclick="ajax_do_budong('#ajax_do_budong');" value="上传" class="btn" />
 				<input type="button" onclick="ui.box.close();" value="关闭" class="btn" />
 			</td>
 		</tr>
@@ -47,11 +48,16 @@ $(document).ready(function() {
 				file_id++;
 				var flag_file = 'file_'+file_id;
 				$.each(e.files, function (index, file) {
-					str = "<p>"+file.name+"&nbsp&nbsp&nbsp&nbsp<a href='javascript:void(0)'  onclick=del('"+flag_file+"')>删除</a></p>";
-					str2= "<input type='hidden' name='files[]' id="+flag_file+" value="+file.name+">";
+					str = "<p>"+file.name+"&nbsp&nbsp&nbsp&nbsp<a href='javascript:void(0)'  data_id="+flag_file+" onclick=budong_del(this)>删除</a></p>";
+					str2= "<input type='hidden' name='img[]' id="+flag_file+" value="+file.name+">";
 					$('#files').append(str);
 					$("#budong_imgs").append(str2);
+					
 				});
+				$('#progress .progress-bar').css(
+						'width',
+						'0%'
+					);
 			},
 			progressall: function (e, data) {
 				var progress = parseInt(data.loaded / data.total * 100, 10);
@@ -64,4 +70,15 @@ $(document).ready(function() {
 		}).prop('disabled', !$.support.fileInput)
 			.parent().addClass($.support.fileInput ? undefined : 'disabled');
 		});
+	function budong_del(obj){
+		debugger;
+		if(confirm("确定要删除吗？")){
+			$(obj).parent().remove();
+			var temp_id = $(obj).attr('data_id');
+			$("#"+temp_id).remove();
+			$(obj).remove();
+		}else{
+			return false;
+		}
+	}
 	</script>

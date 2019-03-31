@@ -1760,7 +1760,7 @@ class index{
 	function ajax_budong(){
 		$order_id = isset($_POST['order_id']) ? $_POST['order_id'] : 0;
 		$bu_dong_img = isset($_POST['img']) ? $_POST['img'] : '';
-		$map['bu_dong_img'] = $bu_dong_img;
+		$map['bu_dong_img'] = implode(",",$bu_dong_img);
 		
 		$this->db->update('esys_order', $map, 'where order_id=' . $order_id, $order_id);
 		$this->ok++;

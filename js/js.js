@@ -629,6 +629,7 @@ function ajax_do_budong(obj){
 		success: function(e) {
 
 			if(e.status == 1){
+				no_refresh = false;
 				ui.box.close();
 				ui.showMessage(e.msg);
 
