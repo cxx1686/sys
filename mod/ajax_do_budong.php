@@ -11,7 +11,9 @@
 					<!-- The file input field used as target for the file upload widget -->
 					<input id="fileupload" type="file" name="files[]" multiple>
 				</span>
-				<input type="hidden" id="img" name="img" value="<?=isset($order_info) ? $order_info['bu_dong_img'] : ''?>" />
+				<div id="budong_imgs">
+				<input type="hidden" id="img" name="img[]" value="<?=isset($order_info) ? $order_info['bu_dong_img'] : ''?>" />
+				</div>
 				<br />
 				<br />
 				<!-- The global progress bar -->
@@ -25,27 +27,30 @@
 		<tr>
 			<th></th>
 			<td>
-				<input type="button" onclick="ajax_do_budong('#ajax_do_budong');" value="上传" class="btn" />
+				<input type="button" onclick="ajax_do_budong('#ajax_do_budong');" value="上传" class="btn" /><a>xxx</a>
 				<input type="button" onclick="ui.box.close();" value="关闭" class="btn" />
 			</td>
 		</tr>
 	</table>
 </form>
-<script src="js/core.js?11"></script>
-<script type="text/javascript" src="js/jquery.ui.js"></script>
 <script src="js/jquery.fileupload.js"></script>
 <script >
 $(document).ready(function() {
 	var url = window.location.hostname === 'blueimp.github.io' ?
 					'//jquery-file-upload.appspot.com/' : 'server/php/';
+		var file_id =1;
 		$('#fileupload').fileupload({
 			url: url,
 			dataType: 'json',
 			autoUpload: true,
 			success: function (e) {
+				file_id++;
+				var flag_file = 'file_'+file_id;
 				$.each(e.files, function (index, file) {
-					$('<p/>').text(file.name).appendTo('#files');
-					$('#img').val(file.name);
+					str = "<p>"+file.name+"&nbsp&nbsp&nbsp&nbsp<a href='javascript:void(0)'  onclick=del('"+flag_file+"')>删除</a></p>";
+					str2= "<input type='hidden' name='files[]' id="+flag_file+" value="+file.name+">";
+					$('#files').append(str);
+					$("#budong_imgs").append(str2);
 				});
 			},
 			progressall: function (e, data) {
