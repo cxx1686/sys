@@ -88,7 +88,7 @@ $baseurl='http://'.$_SERVER['HTTP_HOST'].substr($PHP_SELF,0,strrpos($PHP_SELF,'/
 ?>
 <script> var THEME_URL = '<?=$baseurl;?>';</script>
 <script src="js/core.js?11"></script>
-<script type="text/javascript" src="js/jquery.ui.js"></script>
+<script type="text/javascript" src="js/jquery.ui.js?3"></script>
 <script type="text/javascript" src="js/jquery.ui.datepicker-zh-CN.js"></script>
 <script src="js/jquery.fileupload.js"></script>
-<script type="text/javascript" src="js/js.js?20190324"></script>
+<script type="text/javascript" src="js/js.js?2019040124"></script>

@@ -609,7 +609,8 @@ function ajax_budong(order_id)
         alert('请选择订单！');
         return false;
     }
-	no_refresh = true;
+	//wait_status = false;
+	//con_refresh();
     ui.box.load('ajax.php?act=do_budong&order_id=' + order_id);
     return false;
 }
@@ -642,6 +643,11 @@ function ajax_do_budong(obj){
 	});
 	return false;
 } 
+function show_bu_dong_img(obj){
+	$(obj).hide();
+	$(obj).next().show()
+	return false;
+}
 
 window.onload=function (){
     var customer_id = $("#customer_id").val();

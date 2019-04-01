@@ -108,8 +108,18 @@
 		<?}else{ $bu_dong_img_arr = explode(',',$v['bu_dong_img']);  if(count($bu_dong_img_arr)==1) {?>
 			
 			<a href="server/php/files/<?=$v['bu_dong_img']?>" target="_blank" style="color:orange" >是</a>
+			<label for="male" onclick="ajax_budong('<?=$v['order_id']?>')" style="color:#fff"  >修改</label>
+		<?}else{ ?>
+			<div>
+				<a href='javascript:void(0)' onclick="show_bu_dong_img(this)" style="color:orange" >是</a>
+				<div style="display:none;float:left">
+				<?foreach($bu_dong_img_arr as $i){?>	
+					<a href="server/php/files/<?=$i?>" target="_blank" style="color:orange;display:block;" ><?=$i?></a>
+				<?}?>	
+				</div>
+				<div  style="float:right"><label for="male" onclick="ajax_budong('<?=$v['order_id']?>')" style="color:#fff;"  >修改</label></div>
+			</div>
 		<?}}?>	
-
 			
 
         </td>
@@ -154,3 +164,4 @@
 	<?}?>
 </table>
 </form>
+<script>no_refresh = 1;</script>

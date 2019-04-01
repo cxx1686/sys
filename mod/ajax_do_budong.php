@@ -14,6 +14,9 @@
 				<div id="budong_imgs">
 					<!-- <input type="hidden" id="img" name="img[]" value="<?=isset($order_info) ? $order_info['bu_dong_img'] : ''?>" />
 					 -->
+					 <?$bu_dong_img_arr = explode(',',$order_info['bu_dong_img']); foreach($bu_dong_img_arr as $i){ $temp_arr = explode('.',$i);?>
+						<input type="hidden" id="<?=$temp_arr[0]?>" name="img[]" value="<?=$i?>" />
+					<?}?>
 				</div>
 				<br />
 				<br />
@@ -22,7 +25,11 @@
 					<div class="progress-bar progress-bar-success"></div>
 				</div>
 				<!-- The container for the uploaded files -->
-				<div id="files" class="files"><?=isset($order_info) && $order_info['bu_dong_img'] ? '<a href="server/php/files/' . $order_info['bu_dong_img'] . '" target="_blank">' . $order_info['bu_dong_img'] . '</a>' : ''?></div>
+				<div id="files" class="files">
+					<?$bu_dong_img_arr = explode(',',$order_info['bu_dong_img']); foreach($bu_dong_img_arr as $i){ $temp_arr = explode('.',$i);?>
+						<p><?=$i?>&nbsp&nbsp&nbsp&nbsp&nbsp<a href='javascript:void(0)'  data_id="<?=$temp_arr[0]?>" onclick="budong_del(this)">删除</a></p>
+					<?}?>
+				</div>
 			</td>
 		</tr>
 		<tr>
