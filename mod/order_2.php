@@ -7,9 +7,10 @@
 					<option value="0">所有客户</option>
 					<?$customer_select = $index->get_customer_select($_GET['member_id']);
 					foreach($customer_select as $v){?>
-					<option value="<?=$v['customer_id']?>"<?=isset($_GET['customer_id']) && intval($_GET['customer_id']) == $v['customer_id'] ? ' selected' : ''?>><?=$v['attr_name']?></option>
+					<option value="<?=$v['customer_id']?>"<?  if(isset($_GET['ck'])) { if( trim($_GET['ck']) == $v['attr_name']) echo 'selected';} else { if(isset($_GET['customer_id']) && intval($_GET['customer_id']) == $v['customer_id']){
+					echo 'selected';} }?>><?=$v['attr_name']?></option>
 					<?}?>
-				</select><input type="text" class="text" id="search_customer" placeholder="搜索客户" />
+				</select><input type="text" class="text" value="<?=$_GET['ck']?>" name="ck" id="search_customer" placeholder="搜索客户" />
 				<input type="text" name="start_time" id="datepicker1" value="<?=isset($_GET['start_time']) ? $_GET['start_time'] : '';?>" readonly="readonly" placeholder="发货开始时间" />
 				<select name="start_time_ext">
 					<option value="8">早</option>
@@ -83,7 +84,20 @@
 		<td><?=$v['production_status']==1 ? '部分上机' : $index->get_machine_name($v['machine_id'])?></td>
 		<td><?=$v['production_time'] ? date('Y-m-d H:i', $v['production_time']) : '未上机';?></td>
         <td><?=date('Y-m-d H:i:s', $v['order_time'])?></td>
-		<td><?=$v['bu_dong_img'] ? '<a href="server/php/files/' . $v['bu_dong_img'] . '" target="_blank" style="color:orange" >是</a>' : ''?></td>
+		<td>
+		<? if(!empty($v['bu_dong_img'])) {  $bu_dong_img_arr = explode(',',$v['bu_dong_img']);  if(count($bu_dong_img_arr)==1) { ?>
+			<a href="server/php/files/<?=$v['bu_dong_img']?>" target="_blank" style="color:orange" >是</a>
+		<?}else{ ?>
+			<div>
+				<a href='javascript:void(0)' onclick="show_bu_dong_img(this)" style="color:orange" >是</a>
+				<div style="display:none;float:left">
+				<?foreach($bu_dong_img_arr as $i){?>	
+					<a href="server/php/files/<?=$i?>" target="_blank" style="color:orange;display:block;" ><?=$i?></a>
+				<?}?>	
+				</div>
+			</div>
+		<?}}?>
+		</td>
 		<td><font color="blue"><?if(!empty($v['production_member_id'])){?><?=$index->get_member_name($v['production_member_id'])?><?}?></font></td>
         <td><?=$v['img'] ? '<a href="server/php/files/' . $v['img'] . '" target="_blank">查看</a>' : ''?></td>
 		<td><?=$v['zip_path'] ? '<a href="' . $v['zip_path'] . '" target="_blank">下载</a>' : ''?></td>

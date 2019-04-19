@@ -589,14 +589,16 @@ class index{
 				$where = ' and member_id = ' . $member_id;
 			}
 		}
-
+		
+		
 		$ck = isset($_REQUEST['ck']) && $_REQUEST['ck'] ? $this->safe($_REQUEST['ck']) : '';
+		
 		if(isset($_REQUEST['customer_id']) && $_REQUEST['customer_id']==0){
 			$ck='';
 		}
 		if($ck) $where .= " and attr_name like '%$ck%'";
 		$sql = 'select customer_id, attr_name from esys_customer where is_del=0 ' . $where . ' order by attr_name asc';
-
+		
     $list = $this->db->get_results($sql);
     $res = array();
 		$ck_customer_id = '';
@@ -608,23 +610,28 @@ class index{
 				$res[$ck]['attr_name'] = $ck;
 				$ck_customer_id .= $v['customer_id'].',';
 			}
+			/*
 			if($ck==$v['attr_name']){
 				$flag = 0;
 				unset($res[$ck]);
 			}
-      if(empty($res[$v['attr_name']]))
-      {
-        $res[$v['attr_name']] = $v;
-      }
-      else
-      {
-        $res[$v['attr_name']]['customer_id'] .= ','.$v['customer_id'];
-      }
+			*/
+	  if($ck!=$v['attr_name'] || $_POST['is_chang_order']==1){
+		  if(empty($res[$v['attr_name']]))
+		  {
+			$res[$v['attr_name']] = $v;
+		  }
+		  else
+		  {
+			$res[$v['attr_name']]['customer_id'] .= ','.$v['customer_id'];
+		  }
+	  }
     }
 		if(!empty($ck_customer_id) && $flag==1)
 		{
 			$res[$ck]['customer_id'] .= trim($ck_customer_id,',');
 		}
+		
     return $res;
 		//return $this->db->get_results($sql);
 	}
