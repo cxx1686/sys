@@ -33,10 +33,11 @@ class index{
 	// 会员信息
 	var $member_info = array();
 	var $group_name = array(1=>'业务员', 2=>'技术员', 4=>'跟单员', 5=>'财务', 9=>'管理员');
-  var $pay_type_list = array('代收'=>'代收', '月结'=>'月结', '转账'=>'转账');
+    var $pay_type_list = array('代收'=>'代收', '月结'=>'月结', '转账'=>'转账');
 	var $un_mod = array(1=>array('member', 'edit_member', 'machine', 'edit_machine', 'order', 'material', 'edit_material'), 2=>array('member', 'edit_member', 'machine', 'edit_machine', 'customer', 'edit_customer', 'edit_order', 'order', 'material', 'edit_material'), 9=>array('member', 'edit_member', 'machine', 'edit_machine', 'order_1', 'order_2', 'order_3'), 9=>array('order_1', 'order_2', 'order_3'));
 	var $un_act = array(1=>array('del_member', 'edit_member', 'del_machine', 'edit_machine', 'del_material', 'edit_material', 'res_del_order', 're_order', 'res_del_customer', 're_customer', 'order_excel', 'all_status'), 2=>array('del_member', 'edit_member', 'del_machine', 'edit_machine', 'del_material', 'edit_material', 'del_customer', 're_customer', 'res_del_customer', 'edit_customer', 'del_order', 'res_del_order', 're_order', 'edit_order', 'order_excel'), 4=>array('del_member', 'edit_member', 'del_machine', 'edit_machine', 'del_material', 'edit_material'), 9=>array());
-	
+    var $work_order_types = array('test1'=>'test1', 'test2'=>'test2', 'test3'=>'test3');
+
 	// 初始化
 	function __construct(){
 		global $db;
@@ -578,7 +579,7 @@ class index{
     }
     return $res;
 
-  }
+    }
 	// 读取客户下拉
 	function get_customer_select($member_id = 0){
 		$member_id = isset($_POST['member_id']) && $_POST['member_id'] ? intval($_POST['member_id']) : 0;
@@ -599,12 +600,12 @@ class index{
 		if($ck) $where .= " and attr_name like '%$ck%'";
 		$sql = 'select customer_id, attr_name from esys_customer where is_del=0 ' . $where . ' order by attr_name asc';
 		
-    $list = $this->db->get_results($sql);
-    $res = array();
+        $list = $this->db->get_results($sql);
+        $res = array();
 		$ck_customer_id = '';
 		$flag = 1;
-    foreach($list as $v)
-    {
+        foreach($list as $v)
+        {
 			if(!empty($ck)&& $_POST['is_chang_order']!=1)
 			{
 				$res[$ck]['attr_name'] = $ck;
@@ -616,17 +617,17 @@ class index{
 				unset($res[$ck]);
 			}
 			*/
-	  if($ck!=$v['attr_name'] || $_POST['is_chang_order']==1){
-		  if(empty($res[$v['attr_name']]))
-		  {
-			$res[$v['attr_name']] = $v;
-		  }
-		  else
-		  {
-			$res[$v['attr_name']]['customer_id'] .= ','.$v['customer_id'];
-		  }
-	  }
-    }
+            if($ck!=$v['attr_name'] || $_POST['is_chang_order']==1){
+                if(empty($res[$v['attr_name']]))
+                {
+                    $res[$v['attr_name']] = $v;
+                }
+                else
+                {
+                    $res[$v['attr_name']]['customer_id'] .= ','.$v['customer_id'];
+                }
+            }
+        }
 		if(!empty($ck_customer_id) && $flag==1)
 		{
 			$res[$ck]['customer_id'] .= trim($ck_customer_id,',');
@@ -899,21 +900,21 @@ class index{
 		}
 	}
 	function confirm_production_member(){
-    $order_ids = isset($_POST['order_ids']) ? $_POST['order_ids'] : 0;
-    $member_id = isset($_POST['member_id']) ? $_POST['member_id'] : 0;
-    if (!empty($order_ids) && !empty($member_id)) {
-      $sql = "update esys_order set production_member_id = IF(production_member_id>1, 0, {$member_id})  where order_id in (" . $order_ids . ')';
-      //echo $sql;
-      //exit;
-      $this->db->query($sql);
-      $this->ok++;
-      $this->error[] = '选择成功！';
-    } else {
-      $this->check++;
-      $this->error[] = '请选择订单';
+        $order_ids = isset($_POST['order_ids']) ? $_POST['order_ids'] : 0;
+        $member_id = isset($_POST['member_id']) ? $_POST['member_id'] : 0;
+        if (!empty($order_ids) && !empty($member_id)) {
+            $sql = "update esys_order set production_member_id = IF(production_member_id>1, 0, {$member_id})  where order_id in (" . $order_ids . ')';
+            //echo $sql;
+            //exit;
+            $this->db->query($sql);
+            $this->ok++;
+            $this->error[] = '选择成功！';
+        } else {
+            $this->check++;
+            $this->error[] = '请选择订单';
+        }
+        return true;
     }
-    return true;
-  }
 
 	function confirm_budong(){
 		$order_ids = isset($_POST['order_ids']) ? $_POST['order_ids'] : 0;
@@ -990,11 +991,11 @@ class index{
 		// return $str;
 	}
 
-  function do_order_finance_status(){
-    $finance_ids = isset($_POST['finance_id']) ? $_POST['finance_id'] : 0;
+    function do_order_finance_status(){
+        $finance_ids = isset($_POST['finance_id']) ? $_POST['finance_id'] : 0;
 		$order_id = isset($_POST['order_id']) ? $_POST['order_id'] : 0;
 		if($order_id==0) {
-     $ids = explode(',', $finance_ids);
+            $ids = explode(',', $finance_ids);
 		} else {
 			$ids = explode(',', $order_id);
 		}
@@ -1010,11 +1011,11 @@ class index{
 		$total_finance_price=0;
 		$finance_orders = array();
 		$fin_month=0;
-    foreach($ids as $finance_id) {
-      $finance_price=0;
-      $customer_id_arr = $sale_member_id_arr = array();
-      $map['finance_no'] = $finance_no;
-      $map['finance_status'] = 2;
+        foreach($ids as $finance_id) {
+            $finance_price=0;
+            $customer_id_arr = $sale_member_id_arr = array();
+            $map['finance_no'] = $finance_no;
+            $map['finance_status'] = 2;
 			$map['sy_price'] = 0;
 			$map['settle_time'] = empty($_POST['settle_time']) ? time() : strtotime($_POST['settle_time']);
 
@@ -1047,7 +1048,7 @@ class index{
 				$gain_price = $_POST['sk_price'];
 			}
 			$total_finance_price += $gain_price;
-      $finance_price += $gain_price;
+            $finance_price += $gain_price;
 			foreach ($list as $v) {
 				$price = $v['sy_price'] > 0 ? $v['sy_price'] : $v['price'];
 				$total_price += $price;
@@ -1093,16 +1094,16 @@ class index{
 			$this->db->query($sql);
 			*/
 
-      //记录回款编号和回款金额
-      $id = $this->add_finance(implode(",",$customer_id_arr),$finance_no,$finance_price,$map['settle_time'],implode(",",$sale_member_id_arr),$fin_month,$v['pay_type']);
-      //记录回款明细
-      $this->add_finance_order($finance_orders, $id);
-      $this->ok++;
-    }
+            //记录回款编号和回款金额
+            $id = $this->add_finance(implode(",",$customer_id_arr),$finance_no,$finance_price,$map['settle_time'],implode(",",$sale_member_id_arr),$fin_month,$v['pay_type']);
+            //记录回款明细
+            $this->add_finance_order($finance_orders, $id);
+            $this->ok++;
+        }
 
 		$this->error[] = '收款成功！';
     // return $str;
-  }
+    }
 
 	function all_status(){
 		$ids = isset($_POST['ids']) ? implode(',', $_POST['ids']) : '';
@@ -1426,8 +1427,8 @@ class index{
 		// exit($str);
 	}
 
-  function edit_finance(){
-    $finance_id = isset($_GET['finance_id']) ? trim($_GET['finance_id']) : 0;
+    function edit_finance(){
+        $finance_id = isset($_GET['finance_id']) ? trim($_GET['finance_id']) : 0;
 		$order_id = isset($_GET['order_id']) ? trim($_GET['order_id']) : 0;
 		$params = explode(",",$finance_id);
 		if (empty($params['1']) && $order_id==0) {
@@ -1451,7 +1452,7 @@ class index{
 			require_once('mod/ajax_order_finance.php');
 		}
 
-  }
+    }
 
 	public function upload_zip($upload_file)
 	{
@@ -1579,11 +1580,11 @@ class index{
 		$order_end_time = isset($_GET['order_end_time']) && $_GET['order_end_time'] ? strtotime($_GET['order_end_time'])+86400 : 0;
 		if($order_start_time) $where .= ' and order_time >= ' . $order_start_time;
 		if($order_end_time) $where .= ' and order_time <= ' . $order_end_time;
-    if(!empty($_GET['pay_type'])) $where .= " and pay_type = '" . trim($_GET['pay_type'])."'";
+        if(!empty($_GET['pay_type'])) $where .= " and pay_type = '" . trim($_GET['pay_type'])."'";
 
 		$temp_sql = 'select sum(IF(`sy_price`>0,`sy_price`,price))  as should_gain,sum(price)  as total_price,SUM(weight) AS total_weight,
-      customer_id,member_id,order_create_month,pay_type,sum(sy_price) as total_sy_price,
-      count(order_id) as num from esys_order ' . $where. ' group by customer_id,order_create_month,member_id,pay_type order by order_create_month ASC';
+        customer_id,member_id,order_create_month,pay_type,sum(sy_price) as total_sy_price,
+        count(order_id) as num from esys_order ' . $where. ' group by customer_id,order_create_month,member_id,pay_type order by order_create_month ASC';
 
 		$sql = $this->sqllimit($temp_sql);
 		//echo $sql;
@@ -1611,9 +1612,9 @@ class index{
 			$where .= "and finance_no={$_GET['finance_no']}";
 		}
 
-    if (!empty($_GET['pay_type'])) {
-      $where .= "and pay_type={$_GET['pay_type']}";
-    }
+        if (!empty($_GET['pay_type'])) {
+          $where .= "and pay_type={$_GET['pay_type']}";
+        }
 
 		if (!empty($_GET['member_id'])) {
 			$where .= "and find_in_set({$_GET['member_id']},sale_member_id)";
@@ -1683,7 +1684,7 @@ class index{
 		$map['settle_time'] = $settle_time;
 		$map['sale_member_id'] = $sale_member_id;
 		$map['fin_month'] = $fin_month;
-    $map['pay_type'] = $pay_type;
+        $map['pay_type'] = $pay_type;
 		$map['add_time'] = time();
 		return $this->db->insert('esys_finance', $map);
 	}
@@ -1716,7 +1717,7 @@ class index{
 		$order_info = $this->get_order($order_id);
 		$update = array(
 			// 'sy_price' => $order_info['price'],
-      'sy_price' => 0,
+            'sy_price' => 0,
 			'finance_status' => 0,
 			'finance_no' =>  ''
 		);
@@ -1775,6 +1776,52 @@ class index{
 					
 		
 	}
+
+    function work_order_types(){
+       $res = $this->work_order_types;
+        return $res;
+    }
+
+    // 修改订单
+    function add_work_order(){
+        $order_id = isset($_POST['order_id']) ? intval($_POST['order_id']) : 0;
+        $order_info = $this->get_order($order_id);
+        if(!$order_info) {
+            $this->check++;
+            $this->error[] = '未找到相关订单信息！';
+        }
+        $map['member_id'] = isset($_POST['member_id']) ? intval($_POST['member_id']) : 0;
+        $map['wo_type'] = isset($_POST['pay_type']) ? $this->safe($_POST['wo_type']) : '';
+
+        $map['remarks'] = isset($_POST['remarks']) ? $this->safe($_POST['remarks']) : '';
+        $map['img'] = isset($_POST['img']) ? $_POST['img'] : '';
+
+        if(!$map['member_id']){
+            $this->check++;
+            $this->error[] = '没有选择负责人！';
+        }
+        if(!$map['wo_type']){
+            $this->check++;
+            $this->error[] = '没有选择类别！';
+        }
+        if(!$map['remarks']){
+            $this->check++;
+            $this->error[] = '备注不能为空！';
+        }
+        if(!$map['img']){
+            $this->check++;
+            $this->error[] = '附件不能为空！';
+        }
+
+        $edit_txt = '添加';
+        if(!$this->check){
+            $map['add_time'] = time();
+            $this->db->insert('work_order', $map);
+            $this->ok++;
+            $this->error[] = $edit_txt . '工单创建成功！';
+            $this->header = '?mod=work_order';
+        }
+    }
 
 }
 ?>
