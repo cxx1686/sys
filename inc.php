@@ -1790,8 +1790,9 @@ class index{
             $this->check++;
             $this->error[] = '未找到相关订单信息！';
         }
+        $map['order_id'] = $order_id;
         $map['member_id'] = isset($_POST['member_id']) ? intval($_POST['member_id']) : 0;
-        $map['wo_type'] = isset($_POST['pay_type']) ? $this->safe($_POST['wo_type']) : '';
+        $map['wo_type'] = isset($_POST['wo_type']) ? $this->safe($_POST['wo_type']) : '';
 
         $map['remarks'] = isset($_POST['remarks']) ? $this->safe($_POST['remarks']) : '';
         $map['img'] = isset($_POST['img']) ? $_POST['img'] : '';
@@ -1808,10 +1809,12 @@ class index{
             $this->check++;
             $this->error[] = '备注不能为空！';
         }
-        if(!$map['img']){
-            $this->check++;
-            $this->error[] = '附件不能为空！';
-        }
+//        if(!$map['img']){
+//            $this->check++;
+//            $this->error[] = '附件不能为空！';
+//        }
+        $map['add_time'] = time();
+        $map['create_member_id'] = $this->mid;
 
         $edit_txt = '添加';
         if(!$this->check){
