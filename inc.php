@@ -1826,5 +1826,26 @@ class index{
         }
     }
 
+  // 读取列表数据
+  function work_order_list(){
+    $where = '1=1';
+    // 负责人
+    $member_id = isset($_GET['member_id']) ? $_GET['member_id'] : '';
+    if(is_numeric($member_id)) $where .= ' and member_id = ' . $member_id;
+    // 订单号
+    $order_id = isset($_GET['order_id']) ? $_GET['order_id'] : '';
+    if(is_numeric($order_id)) $where .= ' and order_id = ' . $order_id;
+
+    $ordertype = ' id desc';
+    $sql = 'select * from work_order ' . $where .' order by ' . $ordertype;
+
+    $sql = $this->sqllimit($sql);
+    $list = $this->db->get_results($sql);
+    if($list){
+      $this->recordcount = $this->db->get_count($sql);
+      return $list;
+    }
+  }
+
 }
 ?>
