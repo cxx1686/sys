@@ -36,7 +36,8 @@ class index{
     var $pay_type_list = array('代收'=>'代收', '月结'=>'月结', '转账'=>'转账');
 	var $un_mod = array(1=>array('member', 'edit_member', 'machine', 'edit_machine', 'order', 'material', 'edit_material'), 2=>array('member', 'edit_member', 'machine', 'edit_machine', 'customer', 'edit_customer', 'edit_order', 'order', 'material', 'edit_material'), 9=>array('member', 'edit_member', 'machine', 'edit_machine', 'order_1', 'order_2', 'order_3'), 9=>array('order_1', 'order_2', 'order_3'));
 	var $un_act = array(1=>array('del_member', 'edit_member', 'del_machine', 'edit_machine', 'del_material', 'edit_material', 'res_del_order', 're_order', 'res_del_customer', 're_customer', 'order_excel', 'all_status'), 2=>array('del_member', 'edit_member', 'del_machine', 'edit_machine', 'del_material', 'edit_material', 'del_customer', 're_customer', 'res_del_customer', 'edit_customer', 'del_order', 'res_del_order', 're_order', 'edit_order', 'order_excel'), 4=>array('del_member', 'edit_member', 'del_machine', 'edit_machine', 'del_material', 'edit_material'), 9=>array());
-    var $work_order_types = array('test1'=>'test1', 'test2'=>'test2', 'test3'=>'test3');
+  var $work_order_types = array('test1'=>'test1', 'test2'=>'test2', 'test3'=>'test3');
+  var $work_order_status = array('1'=>'未处理', '2'=>'已处理');
 
 	// 初始化
 	function __construct(){
@@ -1782,6 +1783,20 @@ class index{
         return $res;
     }
 
+  function get_work_order_status(){
+    $res = $this->work_order_status;
+    print_r($res);die;
+    return $res;
+  }
+
+  function get_work_order_status_cn($status){
+    $res = $this->work_order_status;
+    if($res[$status]){
+      return $res[$status];
+    }
+    return '';
+  }
+
     // 修改订单
     function add_work_order(){
         $order_id = isset($_POST['order_id']) ? intval($_POST['order_id']) : 0;
@@ -1828,23 +1843,41 @@ class index{
 
   // 读取列表数据
   function work_order_list(){
-    $where = '1=1';
+    $where = ' where 1=1 ';
     // 负责人
     $member_id = isset($_GET['member_id']) ? $_GET['member_id'] : '';
-    if(is_numeric($member_id)) $where .= ' and member_id = ' . $member_id;
+    if(is_numeric($member_id)) $where .= ' and a.member_id = ' . $member_id;
     // 订单号
     $order_id = isset($_GET['order_id']) ? $_GET['order_id'] : '';
-    if(is_numeric($order_id)) $where .= ' and order_id = ' . $order_id;
+    if(is_numeric($order_id)) $where .= ' and a.order_id = ' . $order_id;
 
     $ordertype = ' id desc';
-    $sql = 'select * from work_order ' . $where .' order by ' . $ordertype;
-
+    $sql = 'select a.* ,b.customer_id,b.price,b.material_id,b.pay_type,b.delivery_time,
+    b.production_time,b.machine_id,b.order_time,b.member_id as order_member_id,
+    b.remarks as order_remarks,b.order_time
+    FROM work_order AS a INNER JOIN esys_order AS b ON a.order_id=b.order_id
+    
+    ' . $where .' order by ' . $ordertype;
     $sql = $this->sqllimit($sql);
     $list = $this->db->get_results($sql);
     if($list){
       $this->recordcount = $this->db->get_count($sql);
       return $list;
     }
+  }
+
+  // 读取列表数据
+  function get_work_order($id){
+    $where = "where id={$id}" ;
+
+    $ordertype = ' id desc';
+    $sql = 'select a.* ,b.customer_id,b.price,b.material_id,b.pay_type,b.delivery_time,
+    b.production_time,b.machine_id,b.order_time,b.member_id as order_member_id,
+    b.remarks as order_remarks,b.order_time
+    FROM work_order AS a INNER JOIN esys_order AS b ON a.order_id=b.order_id
+    
+    ' . $where .' order by ' . $ordertype;
+    return $this->db->get_row($sql);
   }
 
 }

@@ -36,7 +36,7 @@ if($act){
 			<a href="?mod=material"<?=in_array($mod, array('material', 'edit_material')) ? ' class="cur"': ''?>>材料管理</a>
 			<a href="?mod=customer"<?=in_array($mod, array('customer', 'edit_customer')) ? ' class="cur"': ''?>>客户管理</a>
 			<a href="?mod=order"<?=in_array($mod, array('order', 'edit_order', 'edit_order_status')) ? ' class="cur"': ''?>>订单管理</a>
-            <a href="?mod=add_work_order"<?=in_array($mod, array('add_work_order')) ? ' class="cur"': ''?>>工单列表</a>
+            <a href="?mod=work_order"<?=in_array($mod, array('add_work_order','work_order')) ? ' class="cur"': ''?>>工单列表</a>
 			<?}elseif(in_array($index->member_info['group_id'], array(4))){?>
 			<a href="?mod=order_1"<?=in_array($mod, array('order_1', 'edit_order')) ? ' class="cur"': ''?>>下单管理</a>
 			<a href="?mod=order_2"<?=in_array($mod, array('order_2', 'edit_order_status')) ? ' class="cur"': ''?>>发货管理</a>
