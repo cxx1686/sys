@@ -1,6 +1,6 @@
 <div class="search_bar">
 	<form action="" method="get" id="order_search">
-		<input type="hidden" name="mod" value="order" />
+		<input type="hidden" name="mod" value="work_order" />
 		<ul>
 			<li>
 				<select name="member_id" >
@@ -10,10 +10,11 @@
 					<option value="<?=$v['member_id']?>"<?=isset($_GET['member_id']) && intval($_GET['member_id']) == $v['member_id'] ? ' selected' : ''?>><?=$v['username']?></option>
 					<?}?>
 				</select>
+                <!--
                 <input type="text" name="order_start_time" id="datepicker1" value="<?=isset($_GET['order_start_time']) ? $_GET['order_start_time'] : '';?>" readonly="readonly" placeholder="添加开始日期" />
                 -
                 <input type="text" name="order_end_time" id="datepicker2" value="<?=isset($_GET['order_end_time']) ? $_GET['order_end_time'] : '';?>" readonly="readonly" placeholder="添加截止日期" />
-
+                -->
 				<select name="wo_type">
 					<option value="0">类别</option>
 					<?$wo_types = $index->work_order_types();
@@ -23,6 +24,28 @@
 						<?}
 					}?>
 				</select>
+
+                <select name="status">
+                    <option value="-1">状态</option>
+                    <?$wo_status = $index->get_work_order_status();
+                    if($wo_status){
+                        foreach($wo_status as $k=>$v){?>
+                            <option value="<?=$k?>"
+                                <?
+                                $_GET['status'] = empty($_GET['status']) ? 1 : $_GET['status'];
+                                if($_GET['status'] == $k) {
+                                    echo ' selected';
+                                } else {
+                                    echo ' ';
+                                }
+                                ?>
+                                >
+                                <?=$v?>
+                            </option>
+                        <?}
+                    }?>
+                </select>
+
 			</li>
 		</ul>
 		<input type="submit" value="查询" />
@@ -42,6 +65,7 @@
         <th>类别</th>
         <th>图片</th>
         <th>备注</th>
+        <th>工单创建时间</th>
 		<th>客户</th>
 		<th>业务员</th>
 		<th>价格</th>
@@ -63,6 +87,7 @@
         <td><?=$v['wo_type']?></td>
         <td><?=$v['img'] ? '<a href="server/php/files/' . $v['img'] . '" target="_blank">查看</a>' : ''?></td>
         <td><?=$v['remarks']?></td>
+        <td><?=date('Y-m-d H:i:s', $v['add_time'])?></td>
 		<td><?=$index->get_customer_name($v['customer_id'])?></td>
 		<td><?=$index->get_member_name($v['order_member_id'])?></td>
 		<td><?=$v['price']?></td>
@@ -81,7 +106,6 @@
 	<?}?>
 	<tr>
 		<td colspan="16">
-			<div style="float:left;color:red;"><b>总克重：</b><?=$index->count_weight;?>，<b>总金额：</b><?=$index->count_price;?></div>
 			<div style="float:right;"><? $subPages=new SubPages($index->pagesize,$index->recordcount,10,1);?></div>
 		</td>
 	</tr>
