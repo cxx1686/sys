@@ -508,7 +508,8 @@ class index{
 				$map['member_id'] = isset($_POST['member_id']) ? intval($_POST['member_id']) : $this->mid;
 				$old_member_id = isset($_POST['old_member_id']) ? intval($_POST['old_member_id']) : 0;
 				if($old_member_id && $old_member_id != $map['member_id']){ // 同步转移订单到新业务员下
-					$sql = 'update esys_order set member_id = ' . $map['member_id'] . ' where member_id = ' . $old_member_id;
+                    $sql = "update esys_order set member_id = '{$map['member_id']}' where member_id = '{$old_member_id}'
+                     AND customer_id = '{$customer_id}'";
 					$this->db->query($sql);
 				}
 			}else{
