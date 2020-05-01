@@ -59,7 +59,7 @@
 	</form>
 	<ul class="btns">
 		<?if(in_array($index->member_info['group_id'], array(4, 9))){?>
-		<a href="javascript:void(0);" onclick="dc();" class="btn2">导出查询结果</a>
+		<a href="ajax.php?act=order_excel&mod=order&<?=$_SERVER["QUERY_STRING"]?>" target="_blank" class="btn2">导出查询结果</a>
 		<a href="?mod=order" class="btn2">正常订单</a>
 		<a href="?mod=order&is_del=1" class="btn2">已删除订单</a>
 		<?}if(in_array($index->member_info['group_id'], array(1, 4, 9))){?>
@@ -84,7 +84,7 @@
 		<th>发货状态</th>
 		<th>发货时间<div class="ordertype"><a href="<?=$index->get_ordertype('delivery_time', 'asc')?>" class="asc<?=isset($_GET['order']) && $_GET['order']=='delivery_time' && isset($_GET['type']) && $_GET['type']=='asc' ? ' cur' : ''?>"></a><a href="<?=$index->get_ordertype('delivery_time', 'desc')?>" class="desc<?=isset($_GET['order']) && $_GET['order']=='delivery_time' && isset($_GET['type']) && $_GET['type']=='desc' ? ' cur' : ''?>"></a></div></th>
 		<th>下单时间<div class="ordertype"><a href="<?=$index->get_ordertype('order_time', 'asc')?>" class="asc<?=isset($_GET['order']) && $_GET['order']=='order_time' && isset($_GET['type']) && $_GET['type']=='asc' ? ' cur' : ''?>"></a><a href="<?=$index->get_ordertype('order_time', 'desc')?>" class="desc<?=isset($_GET['order']) && $_GET['order']=='order_time' && isset($_GET['type']) && $_GET['type']=='desc' ? ' cur' : ''?>"></a></div></th>
-		<th>技术员</th>
+		<th>技术员姓名</th>
 		<th>图片</th>
 		<th>附件</th>
 		<th>备注</th>
