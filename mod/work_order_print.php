@@ -5,6 +5,7 @@ if($index->check){
 
 	$index->do_error();
 }else{
+    $index->change_work_order_status($id);
     ?>
     <div id="print_content">
 	<table class="list">
@@ -38,6 +39,7 @@ if($index->check){
             </td>
 		</tr>
 	</table>
+    <!--
     <table class="list">
         <tr>
             <th>客户</th>
@@ -62,6 +64,7 @@ if($index->check){
             <td><?=date('Y-m-d H:i:s', $work_order['order_time'])?></td>
         </tr>
     </table>
+    -->
     </div>
 <?}?>
 <script type="text/javascript" src="js/jquery.js"></script>
