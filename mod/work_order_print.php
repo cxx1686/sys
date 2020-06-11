@@ -11,31 +11,37 @@ if($index->check){
 	<table class="list">
 		<caption>工单</caption>
         <tr>
-            <td >工单号</td>
-            <td><input type="text" id="search_material" disabled class="text" value="<?=$work_order['id']?>" /></td>
-            <td id="search_material">订单号</td>
-            <td><input type="text" id="search_material" disabled class="text" value="<?=$work_order['order_id']?>" /></td>
+            <td><?=$index->get_member_name($work_order['order_member_id'])?></td>
+            <td><?=$index->get_customer_name($work_order['customer_id'])?></td>
+            <td><?=$work_order['weight']?></td>
+            <td><?=$work_order['price']?></td>
+            <td><?=$work_order['pay_type']?></td>
+            <td><?=$index->get_material_name($work_order['material_id'])?></td>
+            <td><?=$work_order['machine_id']==0 ? '待上机' : $index->get_machine_name($work_order['machine_id'])?></td>
+            <td><?=$work_order['result_delivery_time'] ? (date('Y-m-d', $work_order['result_delivery_time']) . ' ' . (date('H', $work_order['result_delivery_time']) >= 18 ? '晚' : '<font color=orange>早</font>')) : ($work_order['delivery_time'] > time() ? (date('Y-m-d', $work_order['delivery_time']) . ' ' . (date('H', $work_order['delivery_time']) >= 18 ? '晚' : '<font color=green>早</font>')) : '<font color=red>' . (date('Y-m-d', $work_order['delivery_time']) . ' ' . (date('H', $work_order['delivery_time']) >= 18 ? '晚' : '<font color=green>早</font>')) . '</font>')?></td>
+            <td><?=date('Y-m-d H:i:s', $work_order['order_time'])?></td>
+        </tr>
 
         </tr>
         <tr>
-			<td>负责人</td>
-            <td>
+			<td>责任人</td>
+            <td colspan="3">
                 <input type="text" id="search_material" disabled class="text" value="<?=$index->get_member_name($work_order['member_id'])?>" />
             </td>
-            <td>类别</td>
-            <td >
-                <input type="text" id="search_material" disabled class="text" value="<?=$work_order['wo_type']?>" />
+            <td>处理时效</td>
+            <td colspan="4">
+                <input type="text" id="search_material" disabled class="text" value="<?=date('Y-m-d ', $work_order['estimate_done_time'])?>" />
             </td>
 		</tr>
         <tr>
-            <td>备注</td>
-            <td colspan="3"><?=$work_order['remarks']?>
+            <td>事项说明</td>
+            <td colspan="8"><?=$work_order['remarks']?>
             </td>
         </tr>
 
 		<tr>
-            <td colspan="4" align="center">
-            <img src="<?=$work_order['img'] ? "server/php/files/{$work_order['img']}":'' ?>" align="middle"  width="500px" height="500px">
+            <td colspan="9" align="center">
+            <img src="<?=$work_order['work_order_img'] ? "server/php/files/{$work_order['work_order_img']}":'' ?>" align="middle"  width="500px" height="500px">
             </td>
 		</tr>
 	</table>
@@ -69,9 +75,11 @@ if($index->check){
 <?}?>
 <script type="text/javascript" src="js/jquery.js"></script>
 <script >
+
     $(document).ready(function() {
         prnhtml = $("#print_content").html();
         window.document.body.innerHTML=prnhtml;
         window.print()
     });
+
 </script>

@@ -1861,8 +1861,9 @@ class index{
         }
         $map['order_id'] = $order_id;
         $map['member_id'] = isset($_POST['member_id']) ? intval($_POST['member_id']) : 0;
-        $map['wo_type'] = isset($_POST['wo_type']) ? $this->safe($_POST['wo_type']) : '';
+        //$map['wo_type'] = isset($_POST['wo_type']) ? $this->safe($_POST['wo_type']) : '';
 
+        $map['estimate_done_time'] = isset($_POST['estimate_done_time']) && $_POST['estimate_done_time'] ? strtotime($_POST['estimate_done_time']) : 0;
         $map['remarks'] = isset($_POST['remarks']) ? $this->safe($_POST['remarks']) : '';
         $map['img'] = isset($_POST['img']) ? $_POST['img'] : '';
 
@@ -1870,9 +1871,9 @@ class index{
             $this->check++;
             $this->error[] = '没有选择负责人！';
         }
-        if(!$map['wo_type']){
+        if(!$map['estimate_done_time']){
             $this->check++;
-            $this->error[] = '没有选择类别！';
+            $this->error[] = '处理时效未填！';
         }
         if(!$map['remarks']){
             $this->check++;
@@ -1912,7 +1913,8 @@ class index{
 		$ordertype = ' a.id desc';
 		$sql = 'select a.* ,b.customer_id,b.price,b.material_id,b.pay_type,b.delivery_time,
 		b.production_time,b.machine_id,b.order_time,b.member_id as order_member_id,
-		b.remarks as order_remarks,b.order_time
+		b.remarks as order_remarks,b.order_time,
+		IF(a.`img`!=\'\',a.`img`,b.`img`) AS work_order_img  
 		FROM work_order AS a INNER JOIN esys_order AS b ON a.order_id=b.order_id
 		' . $where .' order by ' . $ordertype;
 		$sql = $this->sqllimit($sql);
@@ -1928,14 +1930,16 @@ class index{
 
 	// 读取列表数据
 	function get_work_order($id){
-		$where = "where id={$id}" ;
+		$where = " where id={$id}" ;
 
 		$ordertype = ' id desc';
-		$sql = 'select a.* ,b.customer_id,b.price,b.material_id,b.pay_type,b.delivery_time,
+		$sql = 'select a.* ,b.weight,b.customer_id,b.price,b.material_id,b.pay_type,b.delivery_time,
 		b.production_time,b.machine_id,b.order_time,b.member_id as order_member_id,
-		b.remarks as order_remarks,b.order_time
+		b.remarks as order_remarks,b.order_time,
+		IF(a.`img`!=\'\',a.`img`,b.`img`) AS work_order_img 
 		FROM work_order AS a INNER JOIN esys_order AS b ON a.order_id=b.order_id' . $where .' order by ' . $ordertype;
-		return $this->db->get_row($sql);
+		$res = $this->db->get_row($sql);
+		return $res;
 	}
     // 修改状态
     function change_work_order_status($id){

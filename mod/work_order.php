@@ -14,7 +14,7 @@
                 <input type="text" name="order_start_time" id="datepicker1" value="<?=isset($_GET['order_start_time']) ? $_GET['order_start_time'] : '';?>" readonly="readonly" placeholder="添加开始日期" />
                 -
                 <input type="text" name="order_end_time" id="datepicker2" value="<?=isset($_GET['order_end_time']) ? $_GET['order_end_time'] : '';?>" readonly="readonly" placeholder="添加截止日期" />
-                -->
+
 				<select name="wo_type">
 					<option value="0">类别</option>
 					<?$wo_types = $index->work_order_types();
@@ -24,7 +24,7 @@
 						<?}
 					}?>
 				</select>
-
+                 -->
                 <select name="status">
                     <option value="-1">状态</option>
                     <?$wo_status = $index->get_work_order_status();
@@ -62,7 +62,7 @@
         <th>工单号</th>
         <th>订单号</th>
         <th>负责人</th>
-        <th>类别</th>
+<!--        <th>类别</th>-->
         <th>图片</th>
         <th>备注</th>
         <th>工单创建时间</th>
@@ -84,8 +84,8 @@
         <td><?=$v['id']?></td>
         <td><?=$v['order_id']?></td>
         <td><?=$index->get_member_name($v['member_id'])?></td>
-        <td><?=$v['wo_type']?></td>
-        <td><?=$v['img'] ? '<a href="server/php/files/' . $v['img'] . '" target="_blank">查看</a>' : ''?></td>
+<!--        <td>--><?//=$v['wo_type']?><!--</td>-->
+        <td><?=$v['work_order_img'] ? '<a href="server/php/files/' . $v['work_order_img'] . '" target="_blank">查看</a>' : ''?></td>
         <td><?=$v['remarks']?></td>
         <td><?=date('Y-m-d H:i:s', $v['add_time'])?></td>
 		<td><?=$index->get_customer_name($v['customer_id'])?></td>
@@ -110,6 +110,6 @@
 		</td>
 	</tr>
 	<?}else{?>
-	<tr><td colspan="16" class="no_info">没有订单！</td></tr>
+	<tr><td colspan="16" class="no_info">没有工单！</td></tr>
 	<?}?>
 </table>

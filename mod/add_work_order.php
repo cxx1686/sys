@@ -9,14 +9,14 @@ if($index->check){
 	<table class="form">
 		<caption>添加工单</caption>
         <tr>
-            <th>订单号</th>
+            <th>订单编号</th>
             <td><input type="text" id="order_id" name="order_id" class="text" value="<?=isset($_GET['order_id']) ? $_GET['order_id'] : ''?>" /></td>
         </tr>
         <tr>
 			<th>负责人</th>
             <td>
 			<select name="member_id" >
-				<option value="0">业务员</option>
+				<option value="0">责任人</option>
 				<?$member_select = $index->get_member_select(0);
 				foreach($member_select as $v){?>
 				<option value="<?=$v['member_id']?>"<?=isset($order_info) && $order_info['member_id'] == $v['member_id'] ? ' selected' : ''?>><?=$v['username']?></option>
@@ -24,21 +24,17 @@ if($index->check){
 			</select>
 			</td>
 		</tr>
+        
         <tr>
-            <th>类别</th>
-            <td>
-                <select name="wo_type" id="wo_type">
-                    <?$wo_types = $index->work_order_types();
-                    foreach($wo_types as $v){?>
-                        <option value="<?=$v?>"><?=$v?></option>
-                    <?}?>
-                </select>
-
-            </td>
+            <th>处理时效</th>
+            <td><input type="text" name="estimate_done_time" id="delivery_time" class="text" value="" /></td>
         </tr>
-
+        <tr>
+            <th>事项说明</th>
+            <td><textarea type="text" name="remarks" class="text"><?=isset($order_info) ? $order_info['remarks'] : ''?></textarea></td>
+        </tr>
 		<tr>
-			<th>图片</th>
+			<th>上传截图</th>
 			<td>
 				<span class="btn btn-success fileinput-button">
 					<i class="glyphicon glyphicon-plus"></i>
@@ -58,10 +54,7 @@ if($index->check){
 			</td>
 		</tr>
 
-		<tr>
-			<th>备注</th>
-			<td><textarea type="text" name="remarks" class="text"><?=isset($order_info) ? $order_info['remarks'] : ''?></textarea></td>
-		</tr>
+
 		<tr>
 			<th></th>
 			<td>
